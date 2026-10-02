@@ -365,12 +365,13 @@
     <p class="section-label">What happened</p>
     <h2>This happened to me.</h2>
     <p>I run my side projects out of a free Jira site. Since June it had collected 100+ tickets: plans, decisions, half-finished ideas.</p>
-    <p>This week I opened it and got this:</p>
+    <p>In September I opened it and got this:</p>
     <div class="terminal">$ curl -I https://<span>my-site</span>.atlassian.net
 <span class="err">HTTP/2 404</span></div>
-    <p>Not "access denied". The whole site was gone. Atlassian can deactivate free sites after a period of inactivity, and the activity it lists is things a person does in the browser: opening a dashboard, viewing an issue.</p>
-    <p>Here's the part that stung: I'd been using that Jira for months, <strong>mostly through automation and the API</strong>. As far as I can tell, none of that counted. Nobody had logged in through the browser in a while, so the clock ran out.</p>
-    <p>I rebuilt the site. Then I went looking at the other free tiers I depend on, and every one of them has its own rule. So I'm building the thing I wish I'd had.</p>
+    <p>Not "access denied". The whole site was gone. Atlassian deactivates free sites after a period of inactivity, and the activity it lists is things a person does in the browser: opening a dashboard, viewing an issue. Support confirmed the data had been deleted and couldn't be recovered.</p>
+    <p>I'd been using that Jira for months, <strong>mostly through automation and the API</strong>. As far as I can tell, none of that counted. Nobody had logged in through the browser in a while, so the clock ran out.</p>
+    <p>Here's the part that stung: <strong>Atlassian did warn me.</strong> Two warning emails in the two weeks before, the first one with the exact date. They landed in the same inbox as Jira's weekly digest emails, and I missed both.</p>
+    <p>I rebuilt the site. Then I went looking at the other free tiers I depend on, and every one of them has its own rule and its own way of telling you. So I'm building the thing I wish I'd had: one place that knows every deadline and makes sure the warning actually reaches you.</p>
   </div>
 </section>
 
