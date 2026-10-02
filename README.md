@@ -23,6 +23,8 @@ Each page links to the other with a relative path (`ja/` and `../`), so it works
 4. Confirm the Formspree plan and its monthly submission limit (the Free plan is 50 per month; both languages share one form, so a post that goes well can exceed it).
 5. Decide how to name the operator in the privacy text (Personal Information Protection Act: operator name/address, purposes, request contact). The pages name Formspree (US) and the contact address but not the operator. Ask legal for a first review.
 6. Note: the yen price (¥350) is about 60% of the English $4. This is a CEO decision (regional pricing); the copy says only "planned pricing and features".
+7. Send one real test signup from the production domain (EN and JA, your own address; delete it in the Formspree dashboard afterwards). Check that the notification arrives with `lang`, `utm_*`, `referrer`, `landing_path` and `form`, that the owner verification is done so `github.io` AJAX is not rejected, and that a JS-disabled submit lands on Formspree's page and still counts.
+8. After merging, check `https://spiritslab.github.io/keepalive-lp/ja/` and the English <-> Japanese switch (utm/ref carried over) on the production URL. Re-check the five table sources if the date in the table ("October 2026") is out of date.
 
 ## Before sending the launch email / starting to charge
 

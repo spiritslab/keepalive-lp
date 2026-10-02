@@ -11,7 +11,7 @@
   <link rel="canonical" href="https://spiritslab.github.io/keepalive-lp/ja/">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0D0F0E">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230D0F0E%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%233DDC84%27/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230D0F0E%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%233DDC84%27/%3E%3C/svg%3E">
   <meta property="og:title" content="Keepalive — 無料枠が止まる前に知らせる">
   <meta property="og:description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
   <meta name="twitter:title" content="Keepalive — 無料枠が止まる前に知らせる">
@@ -74,6 +74,8 @@
       z-index: 100;
     }
     .logo {
+      white-space: nowrap;
+      flex-shrink: 0;
       font-family: var(--mono);
       font-size: 17px;
       font-weight: 700;
@@ -110,6 +112,7 @@
       white-space: nowrap;
     }
     .nav-cta:hover { opacity: 0.88; }
+    .cta-short { display: none; }
 
     /* Hero */
     .hero {
@@ -355,6 +358,11 @@
       .hero { padding-top: 64px; }
       .hero-sub { font-size: 16px; }
     }
+    @media (max-width: 400px) {
+      .cta-long { display: none; }
+      .cta-short { display: inline; }
+      .nav-right { gap: 8px; }
+    }
     /* 650px以下: 表を1サービス1枚のカードに縦積みする */
     @media (max-width: 650px) {
       table { min-width: 0; }
@@ -379,7 +387,7 @@
   <div class="logo"><span class="pulse" aria-hidden="true"></span>keepalive</div>
   <div class="nav-right">
     <a href="../" class="lang-switch" lang="en" hreflang="en">English</a>
-    <a href="#waitlist" class="nav-cta">ウェイトリストに登録</a>
+    <a href="#waitlist" class="nav-cta" aria-label="ウェイトリストに登録"><span class="cta-long">ウェイトリストに登録</span><span class="cta-short" aria-hidden="true">登録</span></a>
   </div>
 </nav>
 
@@ -429,7 +437,7 @@
   <p class="section-label">止まる条件</p>
   <h2>個人開発でよく使う無料枠の、失効ルール</h2>
   <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。ただしJiraのデータ削除は、公式の記載ではなく私の場合の出来事です。</p>
-  <div class="table-wrap" tabindex="0" role="region" aria-label="無料枠の失効ルール">
+  <div class="table-wrap">
     <table>
       <thead>
         <tr><th scope="col">サービス</th><th scope="col">条件</th><th scope="col">何が起きるか</th><th scope="col">出典</th></tr>
@@ -469,7 +477,7 @@
     </table>
   </div>
   <p class="table-foot">最後の行だけ補足します。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリに60日間コミットなどの動きがないと、そのcron自体が止まります。</p>
-  <p class="table-foot">期限を代わりに数えて知らせるツールを作っています。<a href="#waitlist">ウェイトリストに登録</a></p>
+  <p class="table-foot">期限を代わりに数えて知らせるツールを作っています。<a href="#join">ウェイトリストに登録</a></p>
 </section>
 
 <!-- 4. How it works -->
@@ -536,7 +544,7 @@
 </section>
 
 <!-- 7. CTA -->
-<section class="cta-bottom">
+<section class="cta-bottom" id="join">
   <h2>止まる前に、<br>知らせを受け取る</h2>
   <p>ウェイトリストに登録すると、早期アクセスを始めるときにメールを1通送ります。</p>
   <form class="waitlist" id="waitlistForm2" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
@@ -660,7 +668,7 @@
         setStatus(status, 'ok', '登録しました。早期アクセスを始めるときにお知らせします。');
       } catch (err) {
         console.error('[keepalive-lp] submit failed', err);
-        setStatus(status, 'err', '送信できませんでした。少し時間をおいて、もう一度お試しください。');
+        setStatus(status, 'err', '送信できませんでした。少し時間をおいて、もう一度お試しください。うまくいかない場合は studio.nock.system@gmail.com まで、メールアドレスをお送りください。');
       } finally {
         clearTimeout(timer);
         button.textContent = label;

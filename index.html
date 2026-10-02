@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://spiritslab.github.io/keepalive-lp/">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0D0F0E">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230D0F0E%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%233DDC84%27/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230D0F0E%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%233DDC84%27/%3E%3C/svg%3E">
   <meta property="og:title" content="Keepalive — Know before your free tier dies">
   <meta property="og:description" content="Jira, Supabase, Render, MongoDB Atlas: free tiers get paused, expired or deleted on rules most of us never read. Keepalive emails you before the deadline.">
   <meta name="twitter:title" content="Keepalive — Know before your free tier dies">
@@ -169,6 +169,7 @@
       font-size: 16px;
       font-weight: 700;
       padding: 14px 22px;
+      font-family: inherit;
       cursor: pointer;
       white-space: nowrap;
     }
@@ -409,7 +410,7 @@
   <p class="section-label">The fine print</p>
   <h2>You're probably on at least one of these.</h2>
   <p>The rules below are from each provider's own docs (checked October 2026), except the Jira data deletion: that is what happened to me, not something the docs state. Rules change, which is part of the problem.</p>
-  <div class="table-wrap" tabindex="0" role="region" aria-label="Free-tier expiry rules">
+  <div class="table-wrap">
     <table>
       <thead>
         <tr><th scope="col">Service</th><th scope="col">When</th><th scope="col">What happens</th><th scope="col">Source</th></tr>
@@ -449,7 +450,7 @@
     </table>
   </div>
   <p class="table-foot">That last one matters: a lot of "keep my database awake" scripts run on GitHub Actions cron, and in a public repo those workflows are disabled after 60 days without repo activity.</p>
-  <p class="table-foot">I'm building a tool that keeps these clocks for you. <a href="#waitlist">Join the waitlist</a></p>
+  <p class="table-foot">I'm building a tool that keeps these clocks for you. <a href="#join">Join the waitlist</a></p>
 </section>
 
 <!-- 4. How it works -->
@@ -516,7 +517,7 @@
 </section>
 
 <!-- 7. CTA -->
-<section class="cta-bottom">
+<section class="cta-bottom" id="join">
   <h2>Don't let the next one go quietly.</h2>
   <p>Join the waitlist and I'll email you once when early access opens.</p>
   <form class="waitlist" id="waitlistForm2" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
@@ -640,7 +641,7 @@
         setStatus(status, 'ok', "You're on the list. I'll email you once when it's ready.");
       } catch (err) {
         console.error('[keepalive-lp] submit failed', err);
-        setStatus(status, 'err', 'Something went wrong. Please try again in a minute.');
+        setStatus(status, 'err', 'Something went wrong. Please try again in a minute. If it keeps failing, email me at studio.nock.system@gmail.com.');
       } finally {
         clearTimeout(timer);
         button.textContent = label;
