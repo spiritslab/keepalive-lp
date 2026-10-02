@@ -374,7 +374,7 @@
 <main>
 <!-- 1. Hero -->
 <header class="hero" id="top">
-  <div class="badge">early access &middot; for indie devs</div>
+  <div class="badge">waitlist open &middot; for indie devs</div>
   <h1>Your free-tier projects have <span class="accent">deadlines</span>.<br>You just haven't seen them.</h1>
   <p class="hero-sub">
     Jira, Supabase, Render, MongoDB Atlas. Some pause your project after a quiet week, some deactivate it after an inactivity window they don't publish, some expire on a fixed date no matter what you do. Keepalive is being built to email you before it happens.
@@ -397,10 +397,10 @@
   <div class="section story">
     <p class="section-label">What happened</p>
     <h2>This happened to me.</h2>
-    <p>I run my side projects out of a free Jira site. Since June it had collected 100+ tickets: plans, decisions, half-finished ideas.</p>
+    <p>I run my side projects out of a free Jira site. Since June it had collected 100+ issues: plans, decisions, half-finished ideas.</p>
     <p>On September 20 I found the site returned a 404. Not "access denied". The whole site was gone. Support told me the data had already been deleted and couldn't be recovered.</p>
-    <p>I'd been using that Jira for months, <strong>almost daily through the API, from AI tools</strong>. But the activity Atlassian's docs list for inactivity is things a person does in the browser: opening a dashboard, viewing an issue. My guess is that API calls didn't count. The docs don't say that, so it's only a guess.</p>
-    <p>Here's the part that stung: <strong>Atlassian did warn me.</strong> Two warning emails in the two weeks before, the first one with the exact date. They landed in the same inbox as Jira's weekly digest emails, and I missed both.</p>
+    <p>I'd been using that Jira for months, <strong>almost daily through the API, from AI tools</strong>. But the activities Atlassian's docs list for inactivity are things a person does in the browser: opening a dashboard, viewing an issue. My guess is that API calls didn't count. The docs don't say that, so it's only a guess.</p>
+    <p>Here's the part that stung: <strong>Atlassian did warn me.</strong> Two warning emails in the two weeks before it was deactivated, the first one with the exact date. They landed in the same inbox as Jira's weekly digest emails, and I missed both.</p>
     <p>Then I went looking at the other free tiers I use, and each one has its own rule. So I'm building the thing I wish I'd had: one place that keeps track of those deadlines and emails me before they arrive, with the warning emails collected in one spot.</p>
   </div>
 </section>
@@ -449,7 +449,7 @@
       </tbody>
     </table>
   </div>
-  <p class="table-foot">That last one matters: a lot of "keep my database awake" scripts run on GitHub Actions cron, and in a public repo those workflows are disabled after 60 days without repo activity.</p>
+  <p class="table-foot">That last one matters: if your "keep my database awake" script runs on GitHub Actions cron, in a public repo those workflows are disabled after 60 days without repo activity.</p>
   <p class="table-foot">I'm building a tool that keeps these clocks for you. <a href="#join">Join the waitlist</a></p>
 </section>
 

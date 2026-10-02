@@ -427,8 +427,8 @@
       <li class="bad"><time datetime="2026-09-12">9月12日</time>無効化</li>
       <li class="bad"><time datetime="2026-09-24">9月24日</time>サポートが「復旧不可」と回答</li>
     </ol>
-    <p><strong>警告メールは2回届いていて、日付も書いてありました。</strong>Jiraからは毎週お知らせメールが来ていて、私はいつも読まずに既読フォルダへ入れていました。警告メールも同じように流してしまいました。</p>
-    <p>そのあと、自分が使っているほかの無料枠の失効条件を公式ドキュメントで調べてみると、ルールはサービスごとにバラバラでした。それで、各社の期限を計算して知らせ、警告メールも1か所に集めるツールを作り始めました。</p>
+    <p><strong>警告メールは2回届いていて、1通目には日付も書いてありました。</strong>Jiraからは毎週お知らせメールが来ていて、私はいつも読まずに既読フォルダへ入れていました。警告メールも同じように流してしまいました。</p>
+    <p>そのあと、自分が使っているほかの無料枠の失効条件を公式ドキュメントで調べてみると、ルールはサービスごとにバラバラでした。それで、各社の期限を数えて知らせ、警告メールも1か所に集めるツールを作り始めました。</p>
   </div>
 </section>
 
@@ -464,11 +464,11 @@
         <tr>
           <td>MongoDB Atlas Free</td>
           <td data-label="条件"><span class="rule">非アクティブ30日</span></td>
-          <td data-label="何が起きるか">クラスタの一時停止</td>
+          <td data-label="何が起きるか">クラスターの一時停止</td>
           <td data-label="出典"><a href="https://www.mongodb.com/docs/atlas/pause-terminate-cluster/" target="_blank" rel="noopener">MongoDB</a></td>
         </tr>
         <tr>
-          <td>GitHub Actions の cron</td>
+          <td>GitHub Actionsのcron</td>
           <td data-label="条件"><span class="rule">リポジトリの活動なし60日</span></td>
           <td data-label="何が起きるか">スケジュール実行の無効化（publicリポジトリ）</td>
           <td data-label="出典"><a href="https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows" target="_blank" rel="noopener">GitHub</a></td>
@@ -512,7 +512,7 @@
   <p>Jiraの警告メールは、毎週来るお知らせメールと同じ差出人・同じ見た目で届き、その中に埋もれました。Keepaliveのメールは、期限が近づいたときに送る予定です。定期のお知らせメールを送る予定はありません。</p>
   <h3 class="q q-next">「cronでpingすれば済むのでは？」</h3>
   <p>Supabaseなら、多くの場合それで防げます。ただし、Jiraは私の場合、API経由でほぼ毎日使っていても止められました。使っていても期限が来るRenderの無料DBにも、pingは効きません。そのcronも、publicリポジトリに動きがなければ60日で止まります。</p>
-  <p>カレンダーのリマインダーも、サービスが1つなら十分です。無料枠が増えると、ルールがそれぞれ違い、日数が公式ドキュメントに書かれていないものもあります。Keepaliveは、サービスごとの期限を計算して、その前にメールで知らせます。自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
+  <p>カレンダーのリマインダーも、サービスが1つなら十分です。無料枠が増えると、ルールがそれぞれ違い、日数が公式ドキュメントに書かれていないものもあります。Keepaliveは、サービスごとの期限を数えて、その前にメールで知らせます。自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
 </section>
 
 <!-- 6. Pricing preview -->
@@ -557,7 +557,7 @@
   <p class="waitlist-note">アドレスは、早期アクセスの案内と、お問い合わせへの返信にだけ使います。削除したいときはご連絡ください。</p>
 </section>
 
-<p class="privacy" id="privacy">プライバシーについて: フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの早期アクセスの案内と、お問い合わせへの返信だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
+<p class="privacy" id="privacy">プライバシーについて：フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの早期アクセスの案内と、お問い合わせへの返信だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
 
 </main>
 
