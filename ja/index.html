@@ -22,6 +22,7 @@
       --bg: #0D0F0E;
       --surface: #161A18;
       --border: #26302B;
+      --field-border: #5F6F66; /* 入力欄の枠。背景に対して3:1以上（WCAG 1.4.11） */
       --accent: #3DDC84;
       --accent-dim: rgba(61, 220, 132, 0.14);
       --warn: #F5A524;
@@ -150,7 +151,7 @@
       flex: 1;
       min-width: 240px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--field-border);
       border-radius: 12px;
       color: var(--text);
       font-size: 16px;
@@ -175,8 +176,8 @@
     .waitlist button:disabled { opacity: 0.6; cursor: wait; }
     .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
     .waitlist-note { font-size: 13px; color: var(--muted); text-align: center; }
+    /* 常に描画しておく（display:noneから切り替えると、スクリーンリーダーが変更を読み上げないことがある） */
     .form-status {
-      display: none;
       text-align: center;
       font-size: 15px;
       font-weight: 600;
@@ -185,14 +186,13 @@
       max-width: 480px;
       margin: 0 auto 12px;
     }
+    .form-status:empty { padding: 0; border: 0; margin: 0; }
     .form-status.ok {
-      display: block;
       color: var(--accent);
       background: var(--accent-dim);
       border: 1px solid rgba(61, 220, 132, 0.3);
     }
     .form-status.err {
-      display: block;
       color: var(--danger);
       background: rgba(255, 107, 107, 0.08);
       border: 1px solid rgba(255, 107, 107, 0.3);
@@ -355,12 +355,13 @@
   </div>
 </nav>
 
+<main>
 <!-- 1. Hero -->
 <header class="hero" id="top">
   <div class="badge">ウェイトリスト受付中 &middot; 個人開発者向け</div>
   <h1>無料枠が<span class="accent">止まる前に</span>、<br>メールで知らせます。</h1>
   <p class="hero-sub">
-    Jiraは使われていないサイトを無効化します。Supabaseは1週間動きがないと一時停止し、Renderの無料DBは使っていても作成から30日で失効します。止まる条件はサービスごとに違います。Keepaliveは、その期限を代わりに数えておきます。
+    Jiraは、使われていない無料サイトを無効化することがあります。Supabaseは1週間動きがないと一時停止し、Renderの無料DBは使っていても作成から30日で失効します。止まる条件はサービスごとに違います。Keepaliveは、その期限を代わりに数えておきます。
   </p>
 
   <div id="waitlist" style="scroll-margin-top: 90px;">
@@ -398,7 +399,7 @@
 <section class="section">
   <p class="section-label">止まる条件</p>
   <h2>個人開発でよく使う無料枠の、失効ルール</h2>
-  <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。</p>
+  <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。ただしJiraのデータ削除は、公式の記載ではなく私の場合の出来事です。</p>
   <div class="table-wrap">
     <table>
       <thead>
@@ -407,15 +408,15 @@
       <tbody>
         <tr>
           <td>Jira / Confluence Free</td>
-          <td>サイトが無効化され、その後データ削除</td>
+          <td>サイトの無効化（私の場合は、その後データも削除され、復旧できませんでした）</td>
           <td><span class="rule">非アクティブ</span>。日数は公式ドキュメントに記載なし</td>
           <td><a href="https://support.atlassian.com/jira-cloud-administration/docs/what-is-the-free-jira-cloud-plan/" target="_blank" rel="noopener">Atlassian</a></td>
         </tr>
         <tr>
           <td>Supabase Free</td>
-          <td>プロジェクトの一時停止（90日以内なら復元可）</td>
+          <td>プロジェクトの一時停止（停止から1年以内なら復元可）</td>
           <td><span class="rule">非アクティブ1週間</span></td>
-          <td><a href="https://supabase.com/pricing" target="_blank" rel="noopener">Supabase</a></td>
+          <td><a href="https://supabase.com/docs/guides/platform/free-project-pausing" target="_blank" rel="noopener">Supabase</a></td>
         </tr>
         <tr>
           <td>Render Free Postgres</td>
@@ -438,7 +439,7 @@
       </tbody>
     </table>
   </div>
-  <p class="table-foot">最後の行だけ補足します。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリだとそのcron自体が60日で止まります。</p>
+  <p class="table-foot">最後の行だけ補足します。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリに60日間コミットなどの動きがないと、そのcron自体が止まります。</p>
 </section>
 
 <!-- 4. How it works -->
@@ -450,7 +451,7 @@
       <div class="step">
         <div class="step-num">01</div>
         <h3>サービスを登録する</h3>
-        <p>一覧から選ぶか、そのサービスの登録完了メールや警告メールを、自分専用のKeepaliveアドレスに転送します。各サービスの失効ルールはKeepaliveが持っているので、自分で調べる必要はありません。</p>
+        <p>一覧から選ぶか、そのサービスの登録完了メールや警告メールを、自分専用のKeepaliveアドレスに転送します。各サービスの失効ルールはKeepaliveが調べて持っておきます。日数が公開されていないサービスは、届いた警告メールをもとに知らせます。</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
@@ -470,7 +471,7 @@
 <section class="section">
   <p class="section-label">よくある疑問</p>
   <h2>「cronでpingすれば済むのでは？」</h2>
-  <p>Supabaseなら、多くの場合それで防げます。ただし、Jiraは私の場合、API経由でほぼ毎日使っていても止められました。使っていても期限が来るRenderの無料DBにも、pingは効きません。そのcronも、publicリポジトリなら60日で止まります。</p>
+  <p>Supabaseなら、多くの場合それで防げます。ただし、Jiraは私の場合、API経由でほぼ毎日使っていても止められました。使っていても期限が来るRenderの無料DBにも、pingは効きません。そのcronも、publicリポジトリに動きがなければ60日で止まります。</p>
   <p>カレンダーのリマインダーも、サービスが1つなら十分です。無料枠が増えると、ルールがそれぞれ違い、日数が公式ドキュメントに書かれていないものもあります。Keepaliveは、サービスごとの期限を計算して、その前にメールで知らせます。自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
 </section>
 
@@ -498,7 +499,7 @@
         </ul>
       </div>
     </div>
-    <p class="pricing-note">予定価格です。正式公開までに変わることがあります。</p>
+    <p class="pricing-note">予定の価格と機能です。正式公開までに変わることがあります。</p>
   </div>
 </section>
 
@@ -513,10 +514,12 @@
     <button type="submit">公開を知らせてもらう</button>
   </form>
   <div class="form-status" role="status" aria-live="polite"></div>
-  <p class="waitlist-note">アドレスは、その案内とお問い合わせへの返信以外には使いません。削除したいときはご連絡ください。</p>
+  <p class="waitlist-note">アドレスは、早期アクセスの案内と、それに関するご連絡にだけ使います。削除したいときはご連絡ください。</p>
 </section>
 
-<p class="privacy" id="privacy">プライバシーについて: フォームに入力したメールアドレスは、フォーム送信サービスのFormspreeを経由して運営者に届きます。使い道は、Keepaliveの早期アクセスの案内と、それに関する連絡だけです。どのページから来たか（参照元とURLのutmパラメータ）も一緒に記録します。アドレスの削除を希望する場合は <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。</p>
+<p class="privacy" id="privacy">プライバシーについて: フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの早期アクセスの案内と、それに関するご連絡だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
+
+</main>
 
 <!-- 8. Footer -->
 <footer>
@@ -554,23 +557,44 @@
     el.textContent = text;
   }
 
+  // 言語切替リンクにutm等のクエリを引き継ぐ（流入元の集計が言語をまたいで切れないように）
+  if (location.search) {
+    document.querySelectorAll('a[hreflang]').forEach((a) => {
+      a.href = a.getAttribute('href') + location.search;
+    });
+  }
+
   function wire(form) {
     const status = form.nextElementSibling;
     const button = form.querySelector('button');
     const input = form.querySelector('input[type="email"]');
+    status.id = form.id + 'Status';
+
+    function markInvalid(on) {
+      if (on) {
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', status.id);
+      } else {
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = input.value.trim();
       if (!EMAIL_RE.test(email)) {
         setStatus(status, 'err', 'メールアドレスの形式を確認してください。');
+        markInvalid(true);
         input.focus();
         return;
       }
+      markInvalid(false);
       if (!CONFIGURED) {
         // 未設定のまま成功表示にすると、登録が失われたことに誰も気づけない
         setStatus(status, 'err', 'ウェイトリストはまだ準備中です。時間をおいてもう一度お試しください。');
         console.warn('[keepalive-lp] FORMSPREE_ID is not set; submission was not sent.');
+        input.focus();
         return;
       }
 
@@ -579,6 +603,7 @@
       data.append('form', form.id);
 
       button.disabled = true;
+      let ok = false;
       try {
         const res = await fetch(ENDPOINT, {
           method: 'POST',
@@ -586,6 +611,7 @@
           headers: { 'Accept': 'application/json' },
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
+        ok = true;
         form.style.display = 'none';
         setStatus(status, 'ok', '登録しました。早期アクセスを始めるときに、メールを1通お送りします。');
       } catch (err) {
@@ -593,6 +619,14 @@
         setStatus(status, 'err', '送信できませんでした。少し時間をおいて、もう一度お試しください。');
       } finally {
         button.disabled = false;
+      }
+      // 送信中はボタンがdisabledになりフォーカスが失われるので、結果の位置に戻す
+      if (ok) {
+        status.tabIndex = -1;
+        status.focus();
+      } else {
+        markInvalid(false);
+        input.focus();
       }
     });
   }

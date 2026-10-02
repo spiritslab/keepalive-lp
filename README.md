@@ -20,6 +20,17 @@ Each page links to the other with a relative path (`ja/` and `../`), so it works
    - English: "Read the full story"
    - Japanese: 「記事を読む」(link to the Japanese article)
 3. Confirm the Japanese pricing (¥350/month) before announcing the Japanese URL. Price decisions are CEO-approved.
+4. Confirm the Formspree plan and its monthly submission limit (the Free plan is 50 per month; both languages share one form, so a post that goes well can exceed it).
+5. Decide how to name the operator in the privacy text (Personal Information Protection Act: operator name/address, purposes, request contact). The pages name Formspree (US) and the contact address but not the operator. Ask legal for a first review.
+6. Note: the yen price (¥350) is about 60% of the English $4. This is a CEO decision (regional pricing); the copy says only "planned pricing and features".
+
+## Before sending the launch email / starting to charge
+
+Legal checks (outside the LP; get a first review before doing either):
+
+- Act on Specified Electronic Mail: sender name, opt-out contact and address in the email; keep the signup record from Formspree.
+- Total price display (consumption tax): state whether ¥350 includes tax once the operator is a taxable business.
+- Act on Specified Commercial Transactions: needed before taking paid sign-ups or pre-orders, not for the free waitlist.
 
 ## Measuring per-post signups
 

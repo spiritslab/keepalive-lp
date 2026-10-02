@@ -21,6 +21,7 @@
       --bg: #0D0F0E;
       --surface: #161A18;
       --border: #26302B;
+      --field-border: #5F6F66; /* 入力欄の枠。背景に対して3:1以上（WCAG 1.4.11） */
       --accent: #3DDC84;
       --accent-dim: rgba(61, 220, 132, 0.14);
       --warn: #F5A524;
@@ -139,7 +140,7 @@
       flex: 1;
       min-width: 240px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--field-border);
       border-radius: 12px;
       color: var(--text);
       font-size: 16px;
@@ -163,8 +164,8 @@
     .waitlist button:disabled { opacity: 0.6; cursor: wait; }
     .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
     .waitlist-note { font-size: 13px; color: var(--muted); text-align: center; }
+    /* 常に描画しておく（display:noneから切り替えると、スクリーンリーダーが変更を読み上げないことがある） */
     .form-status {
-      display: none;
       text-align: center;
       font-size: 15px;
       font-weight: 600;
@@ -173,14 +174,13 @@
       max-width: 480px;
       margin: 0 auto 12px;
     }
+    .form-status:empty { padding: 0; border: 0; margin: 0; }
     .form-status.ok {
-      display: block;
       color: var(--accent);
       background: var(--accent-dim);
       border: 1px solid rgba(61, 220, 132, 0.3);
     }
     .form-status.err {
-      display: block;
       color: var(--danger);
       background: rgba(255, 107, 107, 0.08);
       border: 1px solid rgba(255, 107, 107, 0.3);
@@ -216,19 +216,6 @@
     }
 
     /* Story */
-    .terminal {
-      background: #0A0C0B;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px;
-      font-family: var(--mono);
-      font-size: 14px;
-      color: var(--muted);
-      margin: 28px 0;
-      overflow-x: auto;
-      white-space: pre;
-    }
-    .terminal .err { color: var(--danger); }
     .story p strong { color: var(--text); }
 
     /* Deadline table */
@@ -351,12 +338,13 @@
   </div>
 </nav>
 
+<main>
 <!-- 1. Hero -->
 <header class="hero" id="top">
   <div class="badge">early access &middot; for indie devs</div>
   <h1>Your free-tier projects have <span class="accent">deadlines</span>.<br>You just haven't seen them.</h1>
   <p class="hero-sub">
-    Jira, Supabase, Render, MongoDB Atlas. Some pause you after a quiet week, some delete you after a quiet few months, some expire on a fixed date no matter what you do. Keepalive emails you before it happens.
+    Jira, Supabase, Render, MongoDB Atlas. Some pause your project after a quiet week, some deactivate it after an inactivity window they don't publish, some expire on a fixed date no matter what you do. Keepalive is being built to email you before it happens.
   </p>
 
   <div id="waitlist" style="scroll-margin-top: 90px;">
@@ -367,7 +355,7 @@
       <button type="submit">Notify me</button>
     </form>
     <div class="form-status" role="status" aria-live="polite"></div>
-    <p class="waitlist-note">One email when it's ready. No spam, no sharing your address.</p>
+    <p class="waitlist-note">One email when early access opens. I use your address only for that and for replying to you.</p>
   </div>
 </header>
 
@@ -377,13 +365,10 @@
     <p class="section-label">What happened</p>
     <h2>This happened to me.</h2>
     <p>I run my side projects out of a free Jira site. Since June it had collected 100+ tickets: plans, decisions, half-finished ideas.</p>
-    <p>In September I opened it and got this:</p>
-    <div class="terminal">$ curl -I https://<span>my-site</span>.atlassian.net
-<span class="err">HTTP/2 404</span></div>
-    <p>Not "access denied". The whole site was gone. Atlassian deactivates free sites after a period of inactivity, and the activity it lists is things a person does in the browser: opening a dashboard, viewing an issue. Support confirmed the data had been deleted and couldn't be recovered.</p>
-    <p>I'd been using that Jira for months, <strong>mostly through automation and the API</strong>. As far as I can tell, none of that counted. Nobody had logged in through the browser in a while, so the clock ran out.</p>
+    <p>On September 20 I found the site returned a 404. Not "access denied". The whole site was gone. Atlassian may deactivate free sites due to inactivity, and the activity it lists is things a person does in the browser: opening a dashboard, viewing an issue. Support replied that the data had already been deleted and couldn't be recovered.</p>
+    <p>I'd been using that Jira for months, <strong>almost daily through the API, from AI tools</strong>. My guess is that none of that counted, because it wasn't browser activity. Atlassian's docs don't say API calls don't count, so this is only a guess.</p>
     <p>Here's the part that stung: <strong>Atlassian did warn me.</strong> Two warning emails in the two weeks before, the first one with the exact date. They landed in the same inbox as Jira's weekly digest emails, and I missed both.</p>
-    <p>I rebuilt the site. Then I went looking at the other free tiers I depend on, and every one of them has its own rule and its own way of telling you. So I'm building the thing I wish I'd had: one place that knows every deadline and makes sure the warning actually reaches you.</p>
+    <p>Then I went looking at the other free tiers I use, and each one has its own rule. So I'm building the thing I wish I'd had: one place that keeps track of those deadlines and emails me before they arrive, with the warning emails collected in one spot.</p>
   </div>
 </section>
 
@@ -391,7 +376,7 @@
 <section class="section">
   <p class="section-label">The fine print</p>
   <h2>You're probably on at least one of these.</h2>
-  <p>Every rule below is taken from the provider's own docs (checked October 2026). They change, which is part of the problem.</p>
+  <p>The rules below are from each provider's own docs (checked October 2026), except the Jira data deletion: that is what happened to me, not something the docs state. Rules change, which is part of the problem.</p>
   <div class="table-wrap">
     <table>
       <thead>
@@ -400,15 +385,15 @@
       <tbody>
         <tr>
           <td>Jira / Confluence Free</td>
-          <td>Site deactivated, then data deleted</td>
+          <td>Site deactivated (in my case, the data was then deleted and couldn't be recovered)</td>
           <td><span class="rule">After inactivity</span>. The docs don't publish a number of days.</td>
           <td><a href="https://support.atlassian.com/jira-cloud-administration/docs/what-is-the-free-jira-cloud-plan/" target="_blank" rel="noopener">Atlassian</a></td>
         </tr>
         <tr>
           <td>Supabase Free</td>
-          <td>Project paused; restorable for 90 days</td>
+          <td>Project paused; restorable for up to 1 year after pausing</td>
           <td><span class="rule">1 week</span> of inactivity</td>
-          <td><a href="https://supabase.com/pricing" target="_blank" rel="noopener">Supabase</a></td>
+          <td><a href="https://supabase.com/docs/guides/platform/free-project-pausing" target="_blank" rel="noopener">Supabase</a></td>
         </tr>
         <tr>
           <td>Render Free Postgres</td>
@@ -431,19 +416,19 @@
       </tbody>
     </table>
   </div>
-  <p class="table-foot">That last one matters: a lot of "keep my database awake" scripts run on GitHub Actions cron, and they quietly stop after 60 days too.</p>
+  <p class="table-foot">That last one matters: a lot of "keep my database awake" scripts run on GitHub Actions cron, and in a public repo those workflows are disabled after 60 days without repo activity.</p>
 </section>
 
 <!-- 4. How it works -->
 <section class="band">
   <div class="section">
-    <p class="section-label">How it works</p>
-    <h2>Two minutes of setup. Then you can forget about it.</h2>
+    <p class="section-label">How it will work (in development)</p>
+    <h2>Set it up once, then let it keep the clock.</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
         <h3>Add a service</h3>
-        <p>Pick it from the list, or forward its welcome or warning email to your private Keepalive address. We know each provider's rules so you don't have to look them up.</p>
+        <p>Pick it from the list, or forward its welcome or warning email to your private Keepalive address. Keepalive keeps each provider's rules, so you don't have to look them up. For services that don't publish a number of days, it works from the warning emails you forward.</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
@@ -453,7 +438,7 @@
       <div class="step">
         <div class="step-num">03</div>
         <h3>You get a heads-up</h3>
-        <p>An email with enough lead time to log in and do something. Click "I checked in" and the timer resets.</p>
+        <p>An email ahead of the deadline, so you have time to log in and do something. Click "I checked in" and the timer resets.</p>
       </div>
     </div>
   </div>
@@ -463,8 +448,8 @@
 <section class="section">
   <p class="section-label">Fair question</p>
   <h2>"Can't I just set up a cron job?"</h2>
-  <p>For Supabase, often yes. But a cron ping doesn't help when the provider wants a human in the browser (Jira), or when the expiry is fixed no matter what (Render's free Postgres). And the cron itself can be switched off after 60 days.</p>
-  <p>A calendar reminder works for one service. Most of us run five or ten free tiers, each with different and sometimes unpublished rules. Keepalive is the one place that keeps track of all of them. It doesn't fake activity on your accounts. It tells you, and you decide.</p>
+  <p>For Supabase, often yes. But a cron ping doesn't help when the provider wants a human in the browser (Jira), or when the expiry is fixed no matter what (Render's free Postgres). And the cron itself can be switched off: in a public repo, scheduled workflows are disabled after 60 days without repo activity.</p>
+  <p>A calendar reminder works for one service. Once you have a handful of free tiers, each has different and sometimes unpublished rules. Keepalive is meant to be the one place that keeps track of them. It doesn't fake activity on your accounts. It tells you, and you decide.</p>
 </section>
 
 <!-- 6. Pricing preview -->
@@ -491,7 +476,7 @@
         </ul>
       </div>
     </div>
-    <p class="pricing-note">Planned pricing. It may change before launch, and waitlist members hear about it first.</p>
+    <p class="pricing-note">Planned pricing and features. They may change before launch.</p>
   </div>
 </section>
 
@@ -506,10 +491,12 @@
     <button type="submit">Notify me when it's ready</button>
   </form>
   <div class="form-status" role="status" aria-live="polite"></div>
-  <p class="waitlist-note">No spam. Unsubscribe by replying to any email.</p>
+  <p class="waitlist-note">I use your address only for that email and for replying to you. Ask me any time to delete it.</p>
 </section>
 
-<p class="privacy" id="privacy">Privacy: the waitlist form sends your email address to Formspree, which forwards it to me. I use it only to tell you about Keepalive's launch, and I'll delete it if you ask. The form also records where you came from (the referrer and any utm parameters in the URL).</p>
+<p class="privacy" id="privacy">Privacy: the email address you enter is sent through Formspree (Formspree, Inc., United States), which forwards it to me and also stores it on its servers. I use it only to tell you about Keepalive's early access and to reply to you. The form also records where you came from (the referrer and any utm parameters in the URL), which I use only to count signups per post. To ask about, correct or delete your data, to stop its use, or with any other question, write to <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a>. I can tell you how the data is kept and which country's rules apply to where it is stored.</p>
+
+</main>
 
 <!-- 8. Footer -->
 <footer>
@@ -547,23 +534,44 @@
     el.textContent = text;
   }
 
+  // 言語切替リンクにutm等のクエリを引き継ぐ（流入元の集計が言語をまたいで切れないように）
+  if (location.search) {
+    document.querySelectorAll('a[hreflang]').forEach((a) => {
+      a.href = a.getAttribute('href') + location.search;
+    });
+  }
+
   function wire(form) {
     const status = form.nextElementSibling;
     const button = form.querySelector('button');
     const input = form.querySelector('input[type="email"]');
+    status.id = form.id + 'Status';
+
+    function markInvalid(on) {
+      if (on) {
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', status.id);
+      } else {
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = input.value.trim();
       if (!EMAIL_RE.test(email)) {
         setStatus(status, 'err', 'Please enter a valid email address.');
+        markInvalid(true);
         input.focus();
         return;
       }
+      markInvalid(false);
       if (!CONFIGURED) {
         // 未設定のまま成功表示にすると、登録が失われたことに誰も気づけない
         setStatus(status, 'err', 'The waitlist is not connected yet. Please try again later.');
         console.warn('[keepalive-lp] FORMSPREE_ID is not set; submission was not sent.');
+        input.focus();
         return;
       }
 
@@ -572,6 +580,7 @@
       data.append('form', form.id);
 
       button.disabled = true;
+      let ok = false;
       try {
         const res = await fetch(ENDPOINT, {
           method: 'POST',
@@ -579,6 +588,7 @@
           headers: { 'Accept': 'application/json' },
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
+        ok = true;
         form.style.display = 'none';
         setStatus(status, 'ok', "You're on the list. I'll email you once when it's ready.");
       } catch (err) {
@@ -586,6 +596,14 @@
         setStatus(status, 'err', 'Something went wrong. Please try again in a minute.');
       } finally {
         button.disabled = false;
+      }
+      // 送信中はボタンがdisabledになりフォーカスが失われるので、結果の位置に戻す
+      if (ok) {
+        status.tabIndex = -1;
+        status.focus();
+      } else {
+        markInvalid(false);
+        input.focus();
       }
     });
   }
