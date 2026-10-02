@@ -12,6 +12,7 @@
   <meta property="og:locale:alternate" content="ja_JP">
   <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
   <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
+  <link rel="alternate" hreflang="x-default" href="https://spiritslab.github.io/keepalive-lp/">
   <meta name="twitter:card" content="summary">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -361,7 +362,7 @@
   <div id="waitlist" style="scroll-margin-top: 90px;">
     <form class="waitlist" id="waitlistForm" novalidate>
       <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
-    <input type="hidden" name="lang" value="en">
+      <input type="hidden" name="lang" value="en">
       <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
       <button type="submit">Notify me</button>
     </form>
@@ -508,7 +509,7 @@
   <p class="waitlist-note">No spam. Unsubscribe by replying to any email.</p>
 </section>
 
-<p class="privacy" id="privacy">Privacy: the waitlist form sends your email address to Formspree, which forwards it to me. I use it only to tell you about Keepalive's launch, and I'll delete it if you ask.</p>
+<p class="privacy" id="privacy">Privacy: the waitlist form sends your email address to Formspree, which forwards it to me. I use it only to tell you about Keepalive's launch, and I'll delete it if you ask. The form also records where you came from (the referrer and any utm parameters in the URL).</p>
 
 <!-- 8. Footer -->
 <footer>
