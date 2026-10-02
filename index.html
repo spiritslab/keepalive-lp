@@ -8,6 +8,10 @@
   <meta property="og:title" content="Keepalive — Know before your free tier dies">
   <meta property="og:description" content="My Jira site disappeared after a stretch of inactivity. Keepalive emails you before your free-tier projects get paused, expired or deleted.">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="ja_JP">
+  <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
+  <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
   <meta name="twitter:card" content="summary">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -83,6 +87,9 @@
       text-decoration: none;
     }
     .nav-cta:hover { opacity: 0.88; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+    .lang-switch { color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap; }
+    .lang-switch:hover { color: var(--text); }
 
     /* Hero */
     .hero {
@@ -337,7 +344,10 @@
 
 <nav>
   <div class="logo"><span class="pulse" aria-hidden="true"></span>keepalive</div>
-  <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+  <div class="nav-right">
+    <a href="ja/" class="lang-switch" lang="ja" hreflang="ja">日本語</a>
+    <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+  </div>
 </nav>
 
 <!-- 1. Hero -->
@@ -351,6 +361,7 @@
   <div id="waitlist" style="scroll-margin-top: 90px;">
     <form class="waitlist" id="waitlistForm" novalidate>
       <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
+    <input type="hidden" name="lang" value="en">
       <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
       <button type="submit">Notify me</button>
     </form>
@@ -489,6 +500,7 @@
   <p>Join the waitlist and I'll email you once when early access opens.</p>
   <form class="waitlist" id="waitlistForm2" novalidate>
     <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
+    <input type="hidden" name="lang" value="en">
     <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
     <button type="submit">Notify me when it's ready</button>
   </form>
@@ -502,10 +514,12 @@
 <footer>
   <span>Built by a solo developer who learned this the hard way.</span>
   <div style="display:flex;gap:22px;">
-    <!-- TODO(CEO): 記事公開後にURLを差し替え -->
+    <!-- TODO(CEO): 記事公開後、URLを差し替えてコメントを外す
     <a href="#" id="storyLink">Read the full story</a>
+    -->
     <a href="mailto:studio.nock.system@gmail.com">Contact</a>
     <a href="#privacy">Privacy</a>
+    <a href="ja/" lang="ja" hreflang="ja">日本語</a>
   </div>
 </footer>
 
