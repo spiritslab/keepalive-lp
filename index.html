@@ -43,6 +43,8 @@
 
     a { color: var(--accent); }
 
+    h1, h2, h3 { text-wrap: balance; }
+
     /* Nav */
     nav {
       display: flex;
@@ -90,7 +92,7 @@
     }
     .nav-cta:hover { opacity: 0.88; }
     .nav-right { display: flex; align-items: center; gap: 18px; }
-    .lang-switch { color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap; }
+    .lang-switch { color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap; padding: 10px 4px; }
     .lang-switch:hover { color: var(--text); }
 
     /* Hero */
@@ -244,6 +246,7 @@
     td { color: var(--muted); }
     td .rule { color: var(--warn); font-weight: 600; }
     td a { font-size: 13px; }
+    .scroll-hint { display: none; font-size: 13px; color: var(--muted); margin-top: 12px; }
     .table-foot { font-size: 14px; color: var(--muted); margin-top: 16px; }
 
     /* Steps */
@@ -325,6 +328,9 @@
       nav { padding: 14px 18px; }
       footer { padding: 22px 18px; }
       .hero { padding-top: 72px; }
+      table { min-width: 480px; }
+      td:first-child { white-space: normal; }
+      .scroll-hint { display: block; }
     }
   </style>
 </head>
@@ -355,7 +361,7 @@
       <button type="submit">Notify me</button>
     </form>
     <div class="form-status" role="status" aria-live="polite"></div>
-    <p class="waitlist-note">One email when early access opens. I use your address only for that and for replying to you.</p>
+    <p class="waitlist-note">One email when early access opens. I use your address only for that and for replying to you (<a href="#privacy">privacy</a>).</p>
   </div>
 </header>
 
@@ -365,8 +371,8 @@
     <p class="section-label">What happened</p>
     <h2>This happened to me.</h2>
     <p>I run my side projects out of a free Jira site. Since June it had collected 100+ tickets: plans, decisions, half-finished ideas.</p>
-    <p>On September 20 I found the site returned a 404. Not "access denied". The whole site was gone. Atlassian may deactivate free sites due to inactivity, and the activity it lists is things a person does in the browser: opening a dashboard, viewing an issue. Support replied that the data had already been deleted and couldn't be recovered.</p>
-    <p>I'd been using that Jira for months, <strong>almost daily through the API, from AI tools</strong>. My guess is that none of that counted, because it wasn't browser activity. Atlassian's docs don't say API calls don't count, so this is only a guess.</p>
+    <p>On September 20 I found the site returned a 404. Not "access denied". The whole site was gone. Support told me the data had already been deleted and couldn't be recovered.</p>
+    <p>I'd been using that Jira for months, <strong>almost daily through the API, from AI tools</strong>. But the activity Atlassian's docs list for inactivity is things a person does in the browser: opening a dashboard, viewing an issue. My guess is that API calls didn't count. The docs don't say that, so it's only a guess.</p>
     <p>Here's the part that stung: <strong>Atlassian did warn me.</strong> Two warning emails in the two weeks before, the first one with the exact date. They landed in the same inbox as Jira's weekly digest emails, and I missed both.</p>
     <p>Then I went looking at the other free tiers I use, and each one has its own rule. So I'm building the thing I wish I'd had: one place that keeps track of those deadlines and emails me before they arrive, with the warning emails collected in one spot.</p>
   </div>
@@ -377,45 +383,46 @@
   <p class="section-label">The fine print</p>
   <h2>You're probably on at least one of these.</h2>
   <p>The rules below are from each provider's own docs (checked October 2026), except the Jira data deletion: that is what happened to me, not something the docs state. Rules change, which is part of the problem.</p>
-  <div class="table-wrap">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Free-tier expiry rules">
     <table>
       <thead>
-        <tr><th>Service</th><th>What happens</th><th>When</th><th>Source</th></tr>
+        <tr><th>Service</th><th>When</th><th>What happens</th><th>Source</th></tr>
       </thead>
       <tbody>
         <tr>
           <td>Jira / Confluence Free</td>
-          <td>Site deactivated (in my case, the data was then deleted and couldn't be recovered)</td>
           <td><span class="rule">After inactivity</span>. The docs don't publish a number of days.</td>
+          <td>Site deactivated (in my case, the data was then deleted and couldn't be recovered)</td>
           <td><a href="https://support.atlassian.com/jira-cloud-administration/docs/what-is-the-free-jira-cloud-plan/" target="_blank" rel="noopener">Atlassian</a></td>
         </tr>
         <tr>
           <td>Supabase Free</td>
-          <td>Project paused; restorable for up to 1 year after pausing</td>
           <td><span class="rule">1 week</span> of inactivity</td>
+          <td>Project paused; restorable for up to 1 year after pausing</td>
           <td><a href="https://supabase.com/docs/guides/platform/free-project-pausing" target="_blank" rel="noopener">Supabase</a></td>
         </tr>
         <tr>
           <td>Render Free Postgres</td>
-          <td>Database expires, deleted after a 14-day grace period</td>
           <td><span class="rule">30 days after creation</span>, active or not</td>
+          <td>Database expires, deleted after a 14-day grace period</td>
           <td><a href="https://render.com/docs/free" target="_blank" rel="noopener">Render</a></td>
         </tr>
         <tr>
           <td>MongoDB Atlas Free</td>
-          <td>Cluster paused</td>
           <td><span class="rule">30 days</span> of inactivity</td>
+          <td>Cluster paused</td>
           <td><a href="https://www.mongodb.com/docs/atlas/pause-terminate-cluster/" target="_blank" rel="noopener">MongoDB</a></td>
         </tr>
         <tr>
           <td>GitHub Actions cron</td>
-          <td>Scheduled workflows disabled (public repos)</td>
           <td><span class="rule">60 days</span> without repo activity</td>
+          <td>Scheduled workflows disabled (public repos)</td>
           <td><a href="https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/disabling-and-enabling-a-workflow" target="_blank" rel="noopener">GitHub</a></td>
         </tr>
       </tbody>
     </table>
   </div>
+  <p class="scroll-hint">The table scrolls sideways.</p>
   <p class="table-foot">That last one matters: a lot of "keep my database awake" scripts run on GitHub Actions cron, and in a public repo those workflows are disabled after 60 days without repo activity.</p>
 </section>
 
@@ -423,7 +430,7 @@
 <section class="band">
   <div class="section">
     <p class="section-label">How it will work (in development)</p>
-    <h2>Set it up once, then let it keep the clock.</h2>
+    <h2>How it will work.</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
@@ -432,8 +439,8 @@
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h3>We keep the clock</h3>
-        <p>Keepalive tracks the deadline for each project: an inactivity window, or a fixed expiry date.</p>
+        <h3>It keeps the clock</h3>
+        <p>Keepalive tracks the deadline for each project: an inactivity window counted from when you added it or last clicked "I checked in", or a fixed expiry date counted from creation. It's designed so you don't have to hand over passwords or API keys.</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
@@ -447,8 +454,10 @@
 <!-- 5. Objections -->
 <section class="section">
   <p class="section-label">Fair question</p>
-  <h2>"Can't I just set up a cron job?"</h2>
-  <p>For Supabase, often yes. But a cron ping doesn't help when the provider wants a human in the browser (Jira), or when the expiry is fixed no matter what (Render's free Postgres). And the cron itself can be switched off: in a public repo, scheduled workflows are disabled after 60 days without repo activity.</p>
+  <h2>"I missed an email. Why would another email help?"</h2>
+  <p>Jira's warnings came from the same sender, looking the same as the weekly digest I'd learned to ignore. Keepalive is meant to email you when a deadline is close. I don't plan to send weekly digests.</p>
+  <h2 style="margin-top:56px">"Can't I just set up a cron job?"</h2>
+  <p>For Supabase, often yes. But a cron ping didn't save my Jira site: I was using it almost daily through the API and it was deactivated anyway. And it can't help when the expiry is fixed no matter what (Render's free Postgres). And the cron itself can be switched off: in a public repo, scheduled workflows are disabled after 60 days without repo activity.</p>
   <p>A calendar reminder works for one service. Once you have a handful of free tiers, each has different and sometimes unpublished rules. Keepalive is meant to be the one place that keeps track of them. It doesn't fake activity on your accounts. It tells you, and you decide.</p>
 </section>
 
@@ -488,13 +497,13 @@
     <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
     <input type="hidden" name="lang" value="en">
     <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
-    <button type="submit">Notify me when it's ready</button>
+    <button type="submit">Notify me</button>
   </form>
   <div class="form-status" role="status" aria-live="polite"></div>
   <p class="waitlist-note">I use your address only for that email and for replying to you. Ask me any time to delete it.</p>
 </section>
 
-<p class="privacy" id="privacy">Privacy: the email address you enter is sent through Formspree (Formspree, Inc., United States), which forwards it to me and also stores it on its servers. I use it only to tell you about Keepalive's early access and to reply to you. The form also records where you came from (the referrer and any utm parameters in the URL), which I use only to count signups per post. To ask about, correct or delete your data, to stop its use, or with any other question, write to <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a>. I can tell you how the data is kept and which country's rules apply to where it is stored.</p>
+<p class="privacy" id="privacy">Privacy: the email address you enter is sent through Formspree (Formspree, Inc., United States), which forwards it to me and also stores it on its servers. I use it only to tell you about Keepalive's early access and to reply to you. The form also records where you came from (the referrer and any utm parameters in the URL), which I use only to count signups per post. To ask about, correct or delete your data, to stop its use, or with any other question, write to <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a>. If you'd like to know how the data is protected, or about the privacy laws of the country where it's stored, just ask.</p>
 
 </main>
 
