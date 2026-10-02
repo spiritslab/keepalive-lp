@@ -8,6 +8,10 @@
   <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
   <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
   <link rel="alternate" hreflang="x-default" href="https://spiritslab.github.io/keepalive-lp/">
+  <link rel="canonical" href="https://spiritslab.github.io/keepalive-lp/ja/">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0D0F0E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230D0F0E%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%233DDC84%27/%3E%3C/svg%3E">
   <meta property="og:title" content="Keepalive — 無料枠が止まる前に知らせる">
   <meta property="og:description" content="Jiraの無料サイトが、非アクティブ扱いでまるごと消えました。Keepaliveは、無料枠のプロジェクトが停止・失効する前にメールで知らせます。">
   <meta property="og:type" content="website">
@@ -19,6 +23,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      color-scheme: dark;
       --bg: #0D0F0E;
       --surface: #161A18;
       --border: #26302B;
@@ -32,7 +37,7 @@
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 
     body {
       background: var(--bg);
@@ -88,7 +93,7 @@
       70% { box-shadow: 0 0 0 10px rgba(61, 220, 132, 0); }
       100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); }
     }
-    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } html { scroll-behavior: auto; } }
     .nav-right { display: flex; align-items: center; gap: 18px; }
     .lang-switch { color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap; padding: 10px 4px; }
     .lang-switch:hover { color: var(--text); }
@@ -156,10 +161,11 @@
       color: var(--text);
       font-size: 16px;
       padding: 14px 18px;
-      outline: none;
     }
     .waitlist input[type="email"]::placeholder { color: var(--muted); }
     .waitlist input[type="email"]:focus { border-color: var(--accent); }
+    .waitlist input[type="email"]:focus-visible,
+    .waitlist button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .waitlist button {
       background: var(--accent);
       color: #062012;
@@ -346,7 +352,12 @@
       .hero-sub { font-size: 16px; }
       table { min-width: 520px; }
       td:first-child { white-space: normal; }
-      .scroll-hint { display: block; }
+    }
+    @media (max-width: 650px) { .scroll-hint { display: block; } }
+    /* 狭い画面では固定ナビをやめ、本文領域を確保する（折り返してもスクロールで消える） */
+    @media (max-width: 360px) {
+      nav { position: static; }
+      html { scroll-padding-top: 16px; }
     }
   </style>
 </head>
@@ -369,7 +380,7 @@
     Jiraは、使われていない無料サイトを無効化することがあります。Supabaseは1週間動きがないと一時停止し、Renderの無料DBは使っていても作成から30日で失効します。止まる条件はサービスごとに違います。Keepaliveは、その期限を代わりに数えて知らせるツールです。いま開発中です。
   </p>
 
-  <div id="waitlist" style="scroll-margin-top: 90px;">
+  <div id="waitlist">
     <form class="waitlist" id="waitlistForm" novalidate>
       <label class="hp" aria-hidden="true">この欄は空のままにしてください <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
       <input type="hidden" name="lang" value="ja">
@@ -390,7 +401,7 @@
     <p>個人開発の作業管理に、Jiraの無料サイトを使っていました。6月から使い始めて、チケットは100件を超えていました。企画も、何をなぜ決めたかの記録も、全部そこに入れていました。</p>
     <p>9月20日に気づいたときには、404になっていました。権限エラーではなく、サイトごとなくなっていました。サポートに問い合わせると、データはすでに削除されていて復旧できない、という回答でした。</p>
     <p>このJiraは、AIからAPI経由でほぼ毎日更新していました。ただ、Atlassianのドキュメントがアクティビティの例に挙げているのは、ダッシュボードを開く、作業項目を表示する、といったブラウザでの操作です。<strong>API経由の操作は数えられていなかったようです。</strong>公式に「APIは数えない」と書いてあるわけではないので、ここは推測です。</p>
-    <ol class="timeline">
+    <ol class="timeline" role="list">
       <li><time datetime="2026-08-28">8月28日</time>「9月11日に無効化されます」とメールが届く</li>
       <li><time datetime="2026-09-05">9月5日</time>「まもなく無効化されます」とメールが届く</li>
       <li class="bad"><time datetime="2026-09-12">9月12日</time>無効化</li>
@@ -409,7 +420,7 @@
   <div class="table-wrap" tabindex="0" role="region" aria-label="無料枠の失効ルール">
     <table>
       <thead>
-        <tr><th>サービス</th><th>条件</th><th>何が起きるか</th><th>出典</th></tr>
+        <tr><th scope="col">サービス</th><th scope="col">条件</th><th scope="col">何が起きるか</th><th scope="col">出典</th></tr>
       </thead>
       <tbody>
         <tr>
@@ -453,7 +464,7 @@
 <section class="band">
   <div class="section">
     <p class="section-label">使い方（開発中）</p>
-    <h2>使い方のイメージ</h2>
+    <h2>3つの手順</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
@@ -468,7 +479,7 @@
       <div class="step">
         <div class="step-num">03</div>
         <h3>期限の前に知らせる</h3>
-        <p>ログインして対処できる余裕をもって、メールが届きます。ログインして対処したら「確認した」を押します。そこから次の期限を数え直します。</p>
+        <p>対処できる余裕をもって、メールが届きます。対応したら「確認した」を押すと、そこから次の期限を数え直します。</p>
       </div>
     </div>
   </div>
@@ -563,6 +574,7 @@
 
   function setStatus(el, kind, text) {
     el.className = 'form-status ' + kind;
+    el.setAttribute('role', kind === 'err' ? 'alert' : 'status');
     el.textContent = text;
   }
 
