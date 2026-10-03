@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keepalive — 無料枠が止まる前に知らせる</title>
+  <meta name="description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
+  <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
+  <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
+  <link rel="alternate" hreflang="x-default" href="https://spiritslab.github.io/keepalive-lp/">
+  <link rel="canonical" href="https://spiritslab.github.io/keepalive-lp/ja/">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0D0F0E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2032%2032%27%3E%3Crect%20width=%2732%27%20height=%2732%27%20rx=%278%27%20fill=%27%230D0F0E%27/%3E%3Ccircle%20cx=%2716%27%20cy=%2716%27%20r=%276%27%20fill=%27%233DDC84%27/%3E%3C/svg%3E">
+  <meta property="og:title" content="Keepalive — 無料枠が止まる前に知らせる">
+  <meta property="og:description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
+  <meta name="twitter:title" content="Keepalive — 無料枠が止まる前に知らせる">
+  <meta name="twitter:description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://spiritslab.github.io/keepalive-lp/ja/">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #0D0F0E;
+      --surface: #161A18;
+      --border: #26302B;
+      --field-border: #5F6F66; /* 入力欄の枠。背景に対して3:1以上（WCAG 1.4.11） */
+      --accent: #3DDC84;
+      --accent-dim: rgba(61, 220, 132, 0.14);
+      --warn: #F5A524;
+      --danger: #FF6B6B;
+      --text: #EEF2EF;
+      --muted: #8A968F;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      /* 日本語はWebフォントを読み込まず、OS標準の日本語フォントを使う */
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Noto Sans CJK JP', 'Yu Gothic UI', Meiryo, sans-serif;
+      line-height: 1.8;
+      min-height: 100vh;
+      /* 禁則: 句読点・小書き仮名を行頭に置かない。長いURL等ははみ出さず折り返す */
+      line-break: strict;
+      overflow-wrap: anywhere;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    a { color: var(--accent); }
+
+    /* 見出しは文節で改行する（対応ブラウザのみ。非対応でも通常の改行になるだけ） */
+    h1, h2, h3 { word-break: auto-phrase; text-wrap: balance; text-spacing-trim: trim-start; }
+
+    /* Nav */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(13, 15, 14, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .logo {
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(61, 220, 132, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(61, 220, 132, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } html { scroll-behavior: auto; } }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+    .lang-switch { color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap; padding: 10px 4px; }
+    .lang-switch:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: #062012;
+      border-radius: 10px;
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { opacity: 0.88; }
+    .cta-short { display: none; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 96px 24px 72px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(61, 220, 132, 0.35);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 12px;
+      margin-bottom: 26px;
+    }
+    h1 {
+      font-size: clamp(28px, 5.6vw, 52px);
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      margin-bottom: 24px;
+    }
+    h1 .accent { color: var(--accent); }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.9;
+      margin: 0 auto 40px;
+      max-width: 600px;
+      text-align: left;
+    }
+
+    /* Waitlist form */
+    .waitlist {
+      display: flex;
+      gap: 10px;
+      max-width: 480px;
+      margin: 0 auto 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .waitlist input[type="email"] {
+      flex: 1;
+      min-width: 240px;
+      background: var(--surface);
+      border: 1px solid var(--field-border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 16px;
+      padding: 14px 18px;
+    }
+    .waitlist input[type="email"]::placeholder { color: var(--muted); }
+    .waitlist input[type="email"]:focus { border-color: var(--accent); }
+    .waitlist input[type="email"]:focus-visible,
+    .waitlist button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .waitlist button {
+      background: var(--accent);
+      color: #062012;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 22px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .waitlist button:hover { opacity: 0.9; }
+    .waitlist button:disabled { opacity: 0.6; cursor: wait; }
+    .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .waitlist-note { font-size: 14px; color: var(--muted); text-align: center; }
+    /* 常に描画しておく（display:noneから切り替えると、スクリーンリーダーが変更を読み上げないことがある） */
+    .form-status {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 16px;
+      border-radius: 12px;
+      max-width: 480px;
+      margin: 0 auto 12px;
+    }
+    .form-status:empty { padding: 0; border: 0; margin: 0; }
+    .form-status.ok {
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(61, 220, 132, 0.3);
+    }
+    .form-status.err {
+      color: var(--danger);
+      background: rgba(255, 107, 107, 0.08);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    /* Sections */
+    .section {
+      padding: 80px 24px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .section h2 {
+      font-size: clamp(24px, 4.2vw, 36px);
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 22px;
+    }
+    .section p { font-size: 16px; color: var(--muted); line-height: 1.95; }
+    .section p + p { margin-top: 16px; }
+    .band {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .q { font-size: clamp(19px, 3.2vw, 24px); font-weight: 800; line-height: 1.5; margin: 28px 0 14px; }
+    .q-next { margin-top: 48px; }
+
+    /* Story */
+    .story p strong { color: var(--text); }
+    .timeline { list-style: none; margin: 28px 0; border-left: 2px solid var(--border); }
+    .timeline li { color: var(--muted); font-size: 15px; padding: 6px 0 6px 18px; display: grid; grid-template-columns: 5.5em 1fr; column-gap: 8px; }
+    .timeline time { font-family: var(--mono); color: var(--text); }
+    .skip { font-size: 14px; margin-bottom: 14px; }
+    .timeline .bad time { color: var(--danger); }
+
+    /* Deadline table */
+    .table-wrap { overflow-x: auto; margin-top: 28px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      min-width: 600px;
+      overflow-wrap: normal;
+    }
+    th, td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    td:first-child { font-weight: 700; color: var(--text); white-space: nowrap; }
+    td { color: var(--muted); }
+    td .rule { color: var(--warn); font-weight: 600; }
+    td a { font-size: 13px; }
+    .table-foot { font-size: 14px; color: var(--muted); margin-top: 16px; }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+    .step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 22px;
+    }
+    .step-num {
+      font-family: var(--mono);
+      color: var(--accent);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 17px; margin-bottom: 8px; line-height: 1.5; }
+    .step p { font-size: 15px; color: var(--muted); line-height: 1.85; }
+
+    /* Pricing */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .plan {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 24px;
+      background: var(--surface);
+    }
+    .plan.pro { border-color: var(--accent); background: linear-gradient(var(--accent-dim), var(--accent-dim)), var(--surface); }
+    .plan h3 { font-size: 16px; margin-bottom: 6px; }
+    .price { font-size: 34px; font-weight: 800; margin-bottom: 4px; }
+    .price small { font-size: 15px; color: var(--muted); font-weight: 500; }
+    .plan ul { list-style: none; margin-top: 16px; }
+    .plan li { color: var(--muted); font-size: 15px; padding: 5px 0 5px 20px; position: relative; }
+    .plan li::before { content: "+"; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+    .pricing-note { font-size: 14px; color: var(--muted); margin-top: 16px; }
+
+    /* CTA bottom */
+    .cta-bottom {
+      padding: 96px 24px;
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .cta-bottom h2 {
+      font-size: clamp(24px, 4.2vw, 38px);
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .cta-bottom p { color: var(--muted); font-size: 16px; margin-bottom: 36px; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+    .privacy { max-width: 820px; margin: 0 auto; padding: 0 24px 48px; font-size: 14px; color: var(--muted); line-height: 1.9; }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 18px; }
+      .nav-right { gap: 14px; }
+      .nav-cta { padding: 8px 12px; font-size: 13px; }
+      footer { padding: 22px 18px; }
+      .hero { padding-top: 64px; }
+      .hero-sub { font-size: 16px; }
+    }
+    @media (max-width: 400px) {
+      .cta-long { display: none; }
+      .cta-short { display: inline; }
+      .nav-right { gap: 8px; }
+    }
+    /* 650px以下: 表を1サービス1枚のカードに縦積みする */
+    @media (max-width: 650px) {
+      table { min-width: 0; }
+      thead { position: absolute; left: -10000px; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tr { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; background: var(--surface); }
+      td, td:first-child { white-space: normal; padding: 6px 0; border-bottom: 0; }
+      td:first-child { font-size: 16px; }
+      td[data-label]::before { content: attr(data-label); display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+      td a { display: inline-block; padding: 6px 0; font-size: 14px; }
+    }
+    /* 狭い画面では固定ナビをやめ、本文領域を確保する（折り返してもスクロールで消える） */
+    @media (max-width: 360px) {
+      nav { position: static; }
+      html { scroll-padding-top: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="pulse" aria-hidden="true"></span>keepalive</div>
+  <div class="nav-right">
+    <a href="../" class="lang-switch" lang="en" hreflang="en">English</a>
+    <a href="#waitlist" class="nav-cta" aria-label="ウェイトリストに登録"><span class="cta-long">ウェイトリストに登録</span><span class="cta-short" aria-hidden="true">登録</span></a>
+  </div>
+</nav>
+
+<main>
+<!-- 1. Hero -->
+<header class="hero" id="top">
+  <div class="badge">ウェイトリスト受付中 &middot; 個人開発者向け</div>
+  <h1>無料枠が<span class="accent">止まる前に</span>、<br>メールで知らせます。</h1>
+  <p class="hero-sub">
+    Jiraは、使われていない無料サイトを無効化することがあります。Supabaseは1週間動きがないと一時停止し、Renderの無料DBは使っていても作成から30日で失効します。止まる条件はサービスごとに違います。Keepaliveは、その期限を代わりに数えて知らせるツールです。いま開発中です。
+  </p>
+
+  <div id="waitlist">
+    <form class="waitlist" id="waitlistForm" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
+      <div class="hp" aria-hidden="true"><label>この欄は空のままにしてください <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="lang" value="ja">
+      <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="メールアドレス">
+      <button type="submit">ウェイトリストに登録</button>
+    </form>
+    <div class="form-status" role="status" aria-live="polite"></div>
+    <p class="waitlist-note">早期アクセス（正式公開前に先に使える期間）を始めるときに、メールを1通送ります。アドレスは、その案内とお問い合わせへの返信にだけ使います（<a href="#privacy">プライバシー</a>）。</p>
+  </div>
+</header>
+
+<!-- 2. Story -->
+<section class="band">
+  <div class="section story">
+    <p class="section-label">何があったか</p>
+    <h2>Jiraの無料サイトが、まるごと消えました</h2>
+    <p class="skip">記事で読んだ方は、<a href="#rules">失効ルールの表</a>へ。</p>
+    <p>個人開発の作業管理に、Jiraの無料サイトを使っていました。6月から使い始めて、チケットは100件を超えていました。企画も、何をなぜ決めたかの記録も、全部そこに入れていました。</p>
+    <p>9月20日に気づいたときには、404になっていました。権限エラーではなく、サイトごとなくなっていました。サポートに問い合わせると、データはすでに削除されていて復旧できない、という回答でした。</p>
+    <p>このJiraは、AIからAPI経由でほぼ毎日更新していました。ただ、Atlassianのドキュメントがアクティビティの例に挙げているのは、ダッシュボードを開く、作業項目を表示する、といったブラウザでの操作です。<strong>API経由の操作は数えられていなかったようです。</strong>公式に「APIは数えない」と書いてあるわけではないので、ここは推測です。</p>
+    <ol class="timeline">
+      <li><time datetime="2026-08-28">8月28日</time>「9月11日に無効化されます」とメールが届く</li>
+      <li><time datetime="2026-09-05">9月5日</time>「まもなく無効化されます」とメールが届く</li>
+      <li class="bad"><time datetime="2026-09-12">9月12日</time>無効化</li>
+      <li class="bad"><time datetime="2026-09-24">9月24日</time>サポートが「復旧不可」と回答</li>
+    </ol>
+    <p><strong>警告メールは2回届いていて、1通目には日付も書いてありました。</strong>Jiraからは毎週お知らせメールが来ていて、私はいつも読まずに既読フォルダへ入れていました。警告メールも同じように流してしまいました。</p>
+    <p>そのあと、自分が使っているほかの無料枠の失効条件を公式ドキュメントで調べてみると、ルールはサービスごとにバラバラでした。それで、各社の期限を数えて知らせ、警告メールも1か所に集めるツールを作り始めました。</p>
+  </div>
+</section>
+
+<!-- 3. Deadlines -->
+<section class="section" id="rules">
+  <p class="section-label">止まる条件</p>
+  <h2>個人開発でよく使う無料枠の、失効ルール</h2>
+  <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。ただしJiraのデータ削除は、公式の記載ではなく私の場合の出来事です。</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th scope="col">サービス</th><th scope="col">条件</th><th scope="col">何が起きるか</th><th scope="col">出典</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jira / Confluence Free</td>
+          <td data-label="条件"><span class="rule">非アクティブ</span>。日数は公式ドキュメントに記載なし</td>
+          <td data-label="何が起きるか">サイトの無効化（私の場合は、その後データも削除され、復旧できませんでした）</td>
+          <td data-label="出典"><a href="https://support.atlassian.com/jira-cloud-administration/docs/what-is-the-free-jira-cloud-plan/" target="_blank" rel="noopener">Atlassian</a></td>
+        </tr>
+        <tr>
+          <td>Supabase Free</td>
+          <td data-label="条件"><span class="rule">非アクティブ1週間</span></td>
+          <td data-label="何が起きるか">プロジェクトの一時停止（停止から1年以内なら復元可）</td>
+          <td data-label="出典"><a href="https://supabase.com/docs/guides/platform/free-project-pausing" target="_blank" rel="noopener">Supabase</a></td>
+        </tr>
+        <tr>
+          <td>Render Free Postgres</td>
+          <td data-label="条件"><span class="rule">作成から30日</span>。使っていても失効</td>
+          <td data-label="何が起きるか">DBが失効し、14日の猶予後に削除</td>
+          <td data-label="出典"><a href="https://render.com/docs/free" target="_blank" rel="noopener">Render</a></td>
+        </tr>
+        <tr>
+          <td>MongoDB Atlas Free</td>
+          <td data-label="条件"><span class="rule">非アクティブ30日</span></td>
+          <td data-label="何が起きるか">クラスターの一時停止</td>
+          <td data-label="出典"><a href="https://www.mongodb.com/docs/atlas/pause-terminate-cluster/" target="_blank" rel="noopener">MongoDB</a></td>
+        </tr>
+        <tr>
+          <td>GitHub Actionsのcron</td>
+          <td data-label="条件"><span class="rule">リポジトリの活動なし60日</span></td>
+          <td data-label="何が起きるか">スケジュール実行の無効化（publicリポジトリ）</td>
+          <td data-label="出典"><a href="https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows" target="_blank" rel="noopener">GitHub</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="table-foot">最後の行だけ補足します。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリに60日間コミットなどの動きがないと、そのcron自体が止まります。</p>
+  <p class="table-foot">期限を代わりに数えて知らせるツールを作っています。<a href="#join">ウェイトリストに登録</a></p>
+</section>
+
+<!-- 4. How it works -->
+<section class="band">
+  <div class="section">
+    <p class="section-label">使い方（開発中）</p>
+    <h2>使い方のイメージ（予定）</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>サービスを登録する</h3>
+        <p>一覧から選ぶか、そのサービスの登録完了メールや警告メールを、自分専用のKeepaliveアドレスに転送します。各サービスの失効ルールはKeepaliveが調べて持っておきます。日数が公開されていないサービスは、届いた警告メールをもとに知らせます。</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>期限を数える</h3>
+        <p>プロジェクトごとに期限を追います。非アクティブで止まるものは、登録した日か最後に「確認した」を押した日から、固定期限のものは作成日から数えます。各サービスのパスワードやAPIキーを預けなくていい形で作っています。</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>期限の前に知らせる</h3>
+        <p>対処できる余裕をもって、メールが届きます。対応したら「確認した」を押すと、そこから次の期限を数え直します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Objections -->
+<section class="section">
+  <h2>よくある疑問</h2>
+  <h3 class="q">「メールを見逃したのに、またメール？」</h3>
+  <p>Jiraの警告メールは、毎週来るお知らせメールと同じ差出人・同じ見た目で届き、その中に埋もれました。Keepaliveのメールは、期限が近づいたときに送る予定です。定期のお知らせメールを送る予定はありません。</p>
+  <h3 class="q q-next">「cronでpingすれば済むのでは？」</h3>
+  <p>Supabaseなら、多くの場合それで防げます。ただし、Jiraは私の場合、API経由でほぼ毎日使っていても止められました。使っていても期限が来るRenderの無料DBにも、pingは効きません。そのcronも、publicリポジトリに動きがなければ60日で止まります。</p>
+  <p>カレンダーのリマインダーも、サービスが1つなら十分です。無料枠が増えると、ルールがそれぞれ違い、日数が公式ドキュメントに書かれていないものもあります。Keepaliveは、サービスごとの期限を数えて、その前にメールで知らせます。自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
+</section>
+
+<!-- 6. Pricing preview -->
+<section class="band">
+  <div class="section">
+    <p class="section-label">料金</p>
+    <h2>料金（予定）</h2>
+    <p class="pricing-note">予定の価格と機能です。正式公開までに変わることがあります。</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">¥0</div>
+        <ul>
+          <li>2サービスまで</li>
+          <li>メール通知</li>
+        </ul>
+      </div>
+      <div class="plan pro">
+        <h3>Pro</h3>
+        <div class="price">¥350<small> / 月</small></div>
+        <ul>
+          <li>サービス数は無制限</li>
+          <li>Slack・Discordへの通知</li>
+          <li>通知タイミングの調整</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. CTA -->
+<section class="cta-bottom" id="join">
+  <h2>止まる前に、<br>知らせを受け取る</h2>
+  <p>ウェイトリストに登録すると、早期アクセスを始めるときにメールを1通送ります。</p>
+  <form class="waitlist" id="waitlistForm2" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
+    <div class="hp" aria-hidden="true"><label>この欄は空のままにしてください <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="lang" value="ja">
+    <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="メールアドレス">
+    <button type="submit">ウェイトリストに登録</button>
+  </form>
+  <div class="form-status" role="status" aria-live="polite"></div>
+  <p class="waitlist-note">アドレスは、早期アクセスの案内と、お問い合わせへの返信にだけ使います。削除したいときはご連絡ください。</p>
+</section>
+
+<p class="privacy" id="privacy">プライバシーについて：フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの早期アクセスの案内と、お問い合わせへの返信だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
+
+</main>
+
+<!-- 8. Footer -->
+<footer>
+  <span>同じ失敗をした個人開発者が、ひとりで作っています。</span>
+  <div class="footer-links">
+    <!-- TODO(CEO): 記事公開後、URLを差し替えてコメントを外す
+    <a href="#" id="storyLink">記事を読む</a>
+    -->
+    <a href="mailto:studio.nock.system@gmail.com">お問い合わせ</a>
+    <a href="#privacy">プライバシー</a>
+    <a href="../" lang="en" hreflang="en">English</a>
+  </div>
+</footer>
+
+<script>
+  // ウェイトリスト送信先（Formspree）。英語版と同じフォームに送り、hiddenの lang=ja で区別する
+  const FORMSPREE_ID = 'mjykqjpe';
+  const ENDPOINT = 'https://formspree.io/f/' + FORMSPREE_ID;
+  const SENDING = '送信中…';
+  const CONFIGURED = FORMSPREE_ID !== 'YOUR_FORMSPREE_ID';
+
+  // 投稿ごとの登録数を測るため、流入元を一緒に送る（例: ?utm_source=zenn&utm_campaign=jira-story）
+  const params = new URLSearchParams(location.search);
+  // 言語切替を挟んだ場合は、切替前の参照元（ref）を引き継ぐ。自サイト内の遷移は参照元として数えない
+  let referrer = document.referrer || '';
+  try { if (referrer && new URL(referrer).origin === location.origin) referrer = ''; } catch (e) { referrer = ''; }
+  referrer = (params.get('ref') || referrer).slice(0, 300);
+  const attribution = {
+    utm_source: (params.get('utm_source') || '').slice(0, 100),
+    utm_medium: (params.get('utm_medium') || '').slice(0, 100),
+    utm_campaign: (params.get('utm_campaign') || '').slice(0, 100),
+    referrer: referrer,
+    landing_path: location.pathname,
+  };
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function setStatus(el, kind, text) {
+    el.className = 'form-status ' + kind;
+    el.textContent = text;
+  }
+
+  // 言語切替リンクにutm等のクエリを引き継ぐ（流入元の集計が言語をまたいで切れないように）
+  document.querySelectorAll('a[hreflang]').forEach((a) => {
+    const q = new URLSearchParams(location.search);
+    if (referrer) q.set('ref', referrer);
+    const qs = q.toString();
+    if (qs) a.href = a.getAttribute('href') + '?' + qs;
+  });
+
+  function wire(form) {
+    const status = form.nextElementSibling;
+    const button = form.querySelector('button');
+    const input = form.querySelector('input[type="email"]');
+    status.id = form.id + 'Status';
+
+    function markInvalid(on) {
+      if (on) {
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', status.id);
+      } else {
+        input.removeAttribute('aria-invalid');
+        input.removeAttribute('aria-describedby');
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!EMAIL_RE.test(email)) {
+        setStatus(status, 'err', 'メールアドレスを確認してください。');
+        markInvalid(true);
+        input.focus();
+        return;
+      }
+      markInvalid(false);
+      if (!CONFIGURED) {
+        // 未設定のまま成功表示にすると、登録が失われたことに誰も気づけない
+        setStatus(status, 'err', 'ウェイトリストはまだ準備中です。時間をおいてもう一度お試しください。');
+        console.warn('[keepalive-lp] FORMSPREE_ID is not set; submission was not sent.');
+        input.focus();
+        return;
+      }
+
+      const data = new FormData(form);
+      Object.entries(attribution).forEach(([k, v]) => data.append(k, v));
+      data.append('form', form.id);
+
+      button.disabled = true;
+      const label = button.textContent;
+      button.textContent = SENDING;
+      let ok = false;
+      // 応答がないままボタンが戻らなくなるのを防ぐ（15秒で打ち切り、エラーとして扱う）
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 15000);
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' },
+          signal: ctrl.signal,
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        ok = true;
+        form.style.display = 'none';
+        setStatus(status, 'ok', '登録しました。早期アクセスを始めるときにお知らせします。');
+      } catch (err) {
+        console.error('[keepalive-lp] submit failed', err);
+        setStatus(status, 'err', '送信できませんでした。少し時間をおいて、もう一度お試しください。うまくいかない場合は studio.nock.system@gmail.com まで、メールアドレスをお送りください。');
+      } finally {
+        clearTimeout(timer);
+        button.textContent = label;
+        button.disabled = false;
+      }
+      // 送信中はボタンがdisabledになりフォーカスが失われるので、結果の位置に戻す
+      if (ok) {
+        status.tabIndex = -1;
+        status.focus();
+      } else {
+        markInvalid(false);
+        input.focus();
+      }
+    });
+  }
+
+  document.querySelectorAll('form.waitlist').forEach(wire);
+</script>
+
+</body>
+</html>
