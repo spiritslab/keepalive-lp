@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keepalive｜無料枠のDBやサイトが止まる前に、メールでお知らせ</title>
-  <meta name="description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
+  <meta name="description" content="Supabaseは1週間アクセスがないと停止、Renderの無料DBは30日で失効。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
   <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
   <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
   <link rel="alternate" hreflang="x-default" href="https://spiritslab.github.io/keepalive-lp/">
@@ -13,9 +13,9 @@
   <meta name="theme-color" content="#0D0F0E">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2032%2032%27%3E%3Crect%20width=%2732%27%20height=%2732%27%20rx=%278%27%20fill=%27%230D0F0E%27/%3E%3Ccircle%20cx=%2716%27%20cy=%2716%27%20r=%276%27%20fill=%27%233DDC84%27/%3E%3C/svg%3E">
   <meta property="og:title" content="Keepalive｜無料枠のDBやサイトが止まる前に、メールでお知らせ">
-  <meta property="og:description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
+  <meta property="og:description" content="Supabaseは1週間アクセスがないと停止、Renderの無料DBは30日で失効。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
   <meta name="twitter:title" content="Keepalive｜無料枠のDBやサイトが止まる前に、メールでお知らせ">
-  <meta name="twitter:description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
+  <meta name="twitter:description" content="Supabaseは1週間アクセスがないと停止、Renderの無料DBは30日で失効。無料枠が止まる条件は、サービスごとに違います。Keepaliveなら、止まったり消えたりする前に、メールでお知らせします。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://spiritslab.github.io/keepalive-lp/ja/">
   <meta property="og:locale" content="ja_JP">
@@ -47,6 +47,7 @@
       /* 日本語はWebフォントを読み込まず、OS標準の日本語フォントを使う */
       font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Noto Sans CJK JP', 'Yu Gothic UI', Meiryo, sans-serif;
       line-height: 1.8;
+      word-break: auto-phrase;
       min-height: 100vh;
       /* 禁則: 句読点・小書き仮名を行頭に置かない。長いURL等ははみ出さず折り返す */
       line-break: strict;
@@ -403,7 +404,7 @@
 <main>
 <!-- 1. Hero -->
 <header class="hero" id="top">
-  <div class="badge">開発中 &middot; 事前登録受付中</div>
+  <div class="badge">個人開発者向け &middot; 開発中 &middot; 事前登録受付中</div>
   <h1>無料枠のDBやサイトが<br><span class="accent">止まる・消える前に</span>お知らせします。</h1>
   <p class="hero-sub">
     Supabaseは、アクセスがないまま1週間で停止。Renderの無料DBは、使っていても作成から30日で失効。無料枠が止まる条件は、サービスごとにバラバラです。
@@ -503,7 +504,7 @@
       <div class="step">
         <div class="step-num">01</div>
         <h3>サービスを登録</h3>
-        <p>一覧から選ぶか、登録完了メールや警告メールを自分専用のKeepaliveアドレスに転送するだけです。各サービスの停止ルールは、こちらで調べて登録しておく予定です。日数が公開されていないサービスは、期限を自分で設定するか、届いた警告メールを転送してもらい、それをもとに知らせます。</p>
+        <p>一覧から選ぶか、登録完了メールや警告メールを自分専用のKeepaliveアドレスに転送します。停止ルールは、こちらで調べて登録しておく予定です。日数が公開されていないサービスは、期限を自分で設定するか、警告メールを転送してください。</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
@@ -513,7 +514,7 @@
       <div class="step">
         <div class="step-num">03</div>
         <h3>期限が近づくとメールが届く</h3>
-        <p>期限の数日前、まだ間に合ううちにメールが届きます。対応が済んだら「確認した」を押してください。非アクティブで止まるものは、そこから次の期限を数え直します。</p>
+        <p>期限が近づくと、まだ間に合ううちにメールが届きます。メールを見たら、そのサービスを開いて使うなど、必要な対応をしてください。済んだら「確認した」を押すと、非アクティブで止まるものは、そこから次の期限を数え直します。</p>
       </div>
     </div>
   </div>
@@ -523,7 +524,7 @@
 <section class="section">
   <h2>よくある質問</h2>
   <h3 class="q">カレンダーに入れておけば十分では？</h3>
-  <p>非アクティブで止まるサービスは、使うたびに期限が後ろへずれます。「1週間後」と入れた予定は、アクセスした時点で古くなり、そのたびに入れ直すことになります。Keepaliveは、サービスを使ったあとに「確認した」を押した日から数え直します。各社の日数を調べる手間も、こちらで引き受けます。</p>
+  <p>非アクティブで止まるサービスは、使うたびに期限が後ろへずれます。「1週間後」と入れた予定は、アクセスした時点で古くなり、そのたびに入れ直すことになります。Keepaliveは、サービスを使ったあとに「確認した」を押した日から数え直します。</p>
   <h3 class="q q-next">メールを見逃したのに、またメール？</h3>
   <p>Jiraの警告メールは、毎週届くお知らせメールと差出人も見た目も同じで、その中に埋もれてしまいました。Keepaliveからのメールは、期限が近いときだけ送ります。ニュースレターのような定期メールは送りません。期限が近づいたときと直前の2回、いつ止まるかが分かる内容でお知らせし、メールのリンクから「確認した」を記録できるようにする予定です。</p>
   <h3 class="q q-next">毎日使っているサービスにも通知が来ますか？</h3>
