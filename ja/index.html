@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keepalive — 無料枠が止まる前に知らせる</title>
-  <meta name="description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
+  <title>Keepalive — 無料枠が消える前にメールで知らせる</title>
+  <meta name="description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件はサービスごとにバラバラです。Keepaliveは各社のルールを調べておき、DBやサイトが消える前にメールで知らせます。">
   <link rel="alternate" hreflang="ja" href="https://spiritslab.github.io/keepalive-lp/ja/">
   <link rel="alternate" hreflang="en" href="https://spiritslab.github.io/keepalive-lp/">
   <link rel="alternate" hreflang="x-default" href="https://spiritslab.github.io/keepalive-lp/">
@@ -12,10 +12,10 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0D0F0E">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2032%2032%27%3E%3Crect%20width=%2732%27%20height=%2732%27%20rx=%278%27%20fill=%27%230D0F0E%27/%3E%3Ccircle%20cx=%2716%27%20cy=%2716%27%20r=%276%27%20fill=%27%233DDC84%27/%3E%3C/svg%3E">
-  <meta property="og:title" content="Keepalive — 無料枠が止まる前に知らせる">
-  <meta property="og:description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
-  <meta name="twitter:title" content="Keepalive — 無料枠が止まる前に知らせる">
-  <meta name="twitter:description" content="Jira、Supabase、Render、MongoDB Atlas。無料枠は、サービスごとに違うルールで停止・失効・削除されます。Keepaliveは期限の前にメールで知らせます。">
+  <meta property="og:title" content="Keepalive — 無料枠が消える前にメールで知らせる">
+  <meta property="og:description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件はサービスごとにバラバラです。Keepaliveは各社のルールを調べておき、DBやサイトが消える前にメールで知らせます。">
+  <meta name="twitter:title" content="Keepalive — 無料枠が消える前にメールで知らせる">
+  <meta name="twitter:description" content="Supabaseは1週間、Renderの無料DBは30日。無料枠が止まる条件はサービスごとにバラバラです。Keepaliveは各社のルールを調べておき、DBやサイトが消える前にメールで知らせます。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://spiritslab.github.io/keepalive-lp/ja/">
   <meta property="og:locale" content="ja_JP">
@@ -147,6 +147,15 @@
       max-width: 600px;
       text-align: left;
     }
+
+    .hero-points {
+      list-style: none;
+      max-width: 600px;
+      margin: -16px auto 36px;
+      text-align: left;
+    }
+    .hero-points li { position: relative; padding: 3px 0 3px 22px; font-size: 16px; color: var(--text); }
+    .hero-points li::before { content: "+"; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
 
     /* Waitlist form */
     .waitlist {
@@ -395,10 +404,15 @@
 <!-- 1. Hero -->
 <header class="hero" id="top">
   <div class="badge">ウェイトリスト受付中 &middot; 個人開発者向け</div>
-  <h1>無料枠が<span class="accent">止まる前に</span>、<br>メールで知らせます。</h1>
+  <h1>無料枠のDBやサイトが<br><span class="accent">消える前に</span>、知らせます。</h1>
   <p class="hero-sub">
-    Jiraは、使われていない無料サイトを無効化することがあります。Supabaseは1週間動きがないと一時停止し、Renderの無料DBは使っていても作成から30日で失効します。止まる条件はサービスごとに違います。Keepaliveは、その期限を代わりに数えて知らせるツールです。いま開発中です。
+    Supabaseは動きがないまま1週間で停止。Renderの無料DBは、使っていても作成から30日で失効。無料枠が止まる条件は、サービスごとにバラバラです。
   </p>
+  <ul class="hero-points">
+    <li>各社の失効ルールを調べなくていい</li>
+    <li>止まる前にメールが届く</li>
+    <li>警告メールを1か所にまとめられる</li>
+  </ul>
 
   <div id="waitlist">
     <form class="waitlist" id="waitlistForm" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
@@ -408,27 +422,27 @@
       <button type="submit">ウェイトリストに登録</button>
     </form>
     <div class="form-status" role="status" aria-live="polite"></div>
-    <p class="waitlist-note">早期アクセス（正式公開前に先に使える期間）を始めるときに、メールを1通送ります。アドレスは、その案内とお問い合わせへの返信にだけ使います（<a href="#privacy">プライバシー</a>）。</p>
+    <p class="waitlist-note">いま開発中です。早期アクセス（正式公開の前に先行して使える期間）を始めるときに、メールを1通だけ送ります。アドレスはその案内と、お問い合わせへの返信にしか使いません（<a href="#privacy">プライバシー</a>）。</p>
   </div>
 </header>
 
 <!-- 2. Story -->
 <section class="band">
   <div class="section story">
-    <p class="section-label">何があったか</p>
-    <h2>Jiraの無料サイトが、まるごと消えました</h2>
-    <p class="skip">記事で読んだ方は、<a href="#rules">失効ルールの表</a>へ。</p>
-    <p>個人開発の作業管理に、Jiraの無料サイトを使っていました。6月から使い始めて、チケットは100件を超えていました。企画も、何をなぜ決めたかの記録も、全部そこに入れていました。</p>
-    <p>9月20日に気づいたときには、404になっていました。権限エラーではなく、サイトごとなくなっていました。サポートに問い合わせると、データはすでに削除されていて復旧できない、という回答でした。</p>
-    <p>このJiraは、AIからAPI経由でほぼ毎日更新していました。ただ、Atlassianのドキュメントがアクティビティの例に挙げているのは、ダッシュボードを開く、作業項目を表示する、といったブラウザでの操作です。<strong>API経由の操作は数えられていなかったようです。</strong>公式に「APIは数えない」と書いてあるわけではないので、ここは推測です。</p>
+    <p class="section-label">作ったきっかけ</p>
+    <h2>警告メールを見落として、Jiraのサイトが消えました</h2>
+    <p class="skip">記事を読んだ方は、<a href="#rules">失効ルールの表</a>へ。</p>
+    <p>6月から、個人開発の作業管理にJiraの無料サイトを使っていました。チケットは100件を超えていて、AIがAPI経由でほぼ毎日書き込んでいたサイトです。それでも非アクティブと判定されて、サイトごと消えました。</p>
     <ol class="timeline">
       <li><time datetime="2026-08-28">8月28日</time>「9月11日に無効化されます」とメールが届く</li>
       <li><time datetime="2026-09-05">9月5日</time>「まもなく無効化されます」とメールが届く</li>
       <li class="bad"><time datetime="2026-09-12">9月12日</time>無効化</li>
+      <li><time datetime="2026-09-20">9月20日</time>404になっているのに気づき、サポートに問い合わせ</li>
       <li class="bad"><time datetime="2026-09-24">9月24日</time>サポートが「復旧不可」と回答</li>
     </ol>
-    <p><strong>警告メールは2回届いていて、1通目には日付も書いてありました。</strong>Jiraからは毎週お知らせメールが来ていて、私はいつも読まずに既読フォルダへ入れていました。警告メールも同じように流してしまいました。</p>
-    <p>そのあと、自分が使っているほかの無料枠の失効条件を公式ドキュメントで調べてみると、ルールはサービスごとにバラバラでした。それで、各社の期限を数えて知らせ、警告メールも1か所に集めるツールを作り始めました。</p>
+    <p><strong>警告メールは2回来ていて、1通目には日付も書いてありました。</strong>毎週届くJiraのお知らせメールと一緒に、読まずにアーカイブへ入れていたんです。</p>
+    <p>Atlassianがアクティビティの例に挙げているのは、ダッシュボードを開くといったブラウザでの操作です。<strong>API経由の書き込みは数えられていなかったようです。</strong>公式に「APIは数えない」と書いてあるわけではないので、ここは推測です。</p>
+    <p>ほかの無料枠も調べてみると、止まる条件はサービスごとにバラバラでした。覚えておくのは無理だと思ったので、Keepaliveを作り始めました。</p>
   </div>
 </section>
 
@@ -436,7 +450,7 @@
 <section class="section" id="rules">
   <p class="section-label">止まる条件</p>
   <h2>個人開発でよく使う無料枠の、失効ルール</h2>
-  <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。ただしJiraのデータ削除は、公式の記載ではなく私の場合の出来事です。</p>
+  <p>各社の公式ドキュメントで確認した内容です（2026年10月時点）。Jiraのデータ削除だけは公式の記載ではなく、私の場合に起きたことです。</p>
   <div class="table-wrap">
     <table>
       <thead>
@@ -476,8 +490,8 @@
       </tbody>
     </table>
   </div>
-  <p class="table-foot">最後の行だけ補足します。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリに60日間コミットなどの動きがないと、そのcron自体が止まります。</p>
-  <p class="table-foot">期限を代わりに数えて知らせるツールを作っています。<a href="#join">ウェイトリストに登録</a></p>
+  <p class="table-foot">最後の行について。Supabaseを止めないためのpingをGitHub Actionsのcronで回している場合、publicリポジトリに60日間コミットなどの動きがないと、そのcron自体が止まります。</p>
+  <p class="table-foot">これを全部覚えておく代わりに、Keepaliveが期限を数えて知らせます。<a href="#join">ウェイトリストに登録</a></p>
 </section>
 
 <!-- 4. How it works -->
@@ -489,17 +503,17 @@
       <div class="step">
         <div class="step-num">01</div>
         <h3>サービスを登録する</h3>
-        <p>一覧から選ぶか、そのサービスの登録完了メールや警告メールを、自分専用のKeepaliveアドレスに転送します。各サービスの失効ルールはKeepaliveが調べて持っておきます。日数が公開されていないサービスは、届いた警告メールをもとに知らせます。</p>
+        <p>一覧から選ぶか、登録完了メールや警告メールを自分専用のKeepaliveアドレスに転送するだけです。失効ルールはKeepaliveが調べて持っています。日数が公開されていないサービスは、届いた警告メールをもとに知らせます。</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
         <h3>期限を数える</h3>
-        <p>プロジェクトごとに期限を追います。非アクティブで止まるものは、登録した日か最後に「確認した」を押した日から、固定期限のものは作成日から数えます。各サービスのパスワードやAPIキーを預けなくていい形で作っています。</p>
+        <p>非アクティブで止まるものは、登録した日か、最後に「確認した」を押した日から数えます。作成日から決まるものは作成日から。各サービスのパスワードやAPIキーは、預けなくていい形で作っています。</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
         <h3>期限の前に知らせる</h3>
-        <p>対処できる余裕をもって、メールが届きます。対応したら「確認した」を押すと、そこから次の期限を数え直します。</p>
+        <p>対処できる日数を残して、メールが届きます。対応したら「確認した」を押すと、次の期限を数え直します。</p>
       </div>
     </div>
   </div>
@@ -507,12 +521,14 @@
 
 <!-- 5. Objections -->
 <section class="section">
-  <h2>よくある疑問</h2>
-  <h3 class="q">「メールを見逃したのに、またメール？」</h3>
-  <p>Jiraの警告メールは、毎週来るお知らせメールと同じ差出人・同じ見た目で届き、その中に埋もれました。Keepaliveのメールは、期限が近づいたときに送る予定です。定期のお知らせメールを送る予定はありません。</p>
-  <h3 class="q q-next">「cronでpingすれば済むのでは？」</h3>
-  <p>Supabaseなら、多くの場合それで防げます。ただし、Jiraは私の場合、API経由でほぼ毎日使っていても止められました。使っていても期限が来るRenderの無料DBにも、pingは効きません。そのcronも、publicリポジトリに動きがなければ60日で止まります。</p>
-  <p>カレンダーのリマインダーも、サービスが1つなら十分です。無料枠が増えると、ルールがそれぞれ違い、日数が公式ドキュメントに書かれていないものもあります。Keepaliveは、サービスごとの期限を数えて、その前にメールで知らせます。自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
+  <h2>よくある質問</h2>
+  <h3 class="q">カレンダーに入れておけば十分では？</h3>
+  <p>サービスが1つなら、それで十分です。ただ、カレンダーに入れるには、サービスごとのルールを自分で調べて覚えておく必要があります。日数が公式ドキュメントに書かれていないサービスもあります。その手間をなくすのがKeepaliveです。</p>
+  <h3 class="q q-next">メールを見逃したのに、またメール？</h3>
+  <p>Jiraの警告メールは、毎週のお知らせメールと同じ差出人・同じ見た目で届いて、その中に埋もれました。Keepaliveが送るのは、期限が近づいたときのメールだけにする予定です。定期的なお知らせメールは送りません。</p>
+  <h3 class="q q-next">cronでpingすれば済むのでは？</h3>
+  <p>Supabaseなら、多くの場合それで防げます。ただ、私のJiraはAPIでほぼ毎日使っていても止まりました。使っていても30日で失効するRenderの無料DBにも、pingは効きません。そのcron自体も、publicリポジトリに動きがなければ60日で止まります。</p>
+  <p>なお、Keepaliveには自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
 </section>
 
 <!-- 6. Pricing preview -->
@@ -545,8 +561,8 @@
 
 <!-- 7. CTA -->
 <section class="cta-bottom" id="join">
-  <h2>止まる前に、<br>知らせを受け取る</h2>
-  <p>ウェイトリストに登録すると、早期アクセスを始めるときにメールを1通送ります。</p>
+  <h2>無料枠の期限は、<br>Keepaliveに任せてください</h2>
+  <p>登録しておくと、早期アクセスを始めるときにメールを1通だけ送ります。</p>
   <form class="waitlist" id="waitlistForm2" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
     <div class="hp" aria-hidden="true"><label>この欄は空のままにしてください <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
     <input type="hidden" name="lang" value="ja">
@@ -554,7 +570,7 @@
     <button type="submit">ウェイトリストに登録</button>
   </form>
   <div class="form-status" role="status" aria-live="polite"></div>
-  <p class="waitlist-note">アドレスは、早期アクセスの案内と、お問い合わせへの返信にだけ使います。削除したいときはご連絡ください。</p>
+  <p class="waitlist-note">アドレスは早期アクセスの案内と、お問い合わせへの返信にしか使いません。削除してほしいときはご連絡ください。</p>
 </section>
 
 <p class="privacy" id="privacy">プライバシーについて：フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの早期アクセスの案内と、お問い合わせへの返信だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
@@ -563,7 +579,7 @@
 
 <!-- 8. Footer -->
 <footer>
-  <span>同じ失敗をした個人開発者が、ひとりで作っています。</span>
+  <span>Jiraのサイトを失った経験から作っています。</span>
   <div class="footer-links">
     <!-- TODO(CEO): 記事公開後、URLを差し替えてコメントを外す
     <a href="#" id="storyLink">記事を読む</a>
