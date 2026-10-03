@@ -409,9 +409,9 @@
     Supabaseは、アクセスがないまま1週間で停止。Renderの無料DBは、使っていても作成から30日で失効。無料枠が止まる条件は、サービスごとにバラバラです。
   </p>
   <ul class="hero-points">
+    <li>止まる前に、期限を知らせるメールが届く</li>
     <li>各社の失効ルールを調べなくていい</li>
-    <li>止まる前にメールが届く</li>
-    <li>警告メールを1つの受信先にまとめられる</li>
+    <li>複数サービスの期限を1か所で見られる</li>
   </ul>
 
   <div id="waitlist">
@@ -490,7 +490,6 @@
       </tbody>
     </table>
   </div>
-  <p class="table-foot">※ Supabaseの停止を防ぐためにGitHub Actionsのcronでpingしている場合、publicリポジトリに60日間コミットなどがないと、そのcron自体が止まります。</p>
   <p class="table-foot">これを全部覚えておく必要はありません。期限はKeepaliveが数えて、近づいたらメールでお知らせします。<a href="#join">事前登録はこちら</a></p>
 </section>
 
@@ -498,7 +497,8 @@
 <section class="band">
   <div class="section">
     <p class="section-label">使い方</p>
-    <h2>使い方のイメージ（予定）</h2>
+    <h2>使い方のイメージ</h2>
+    <p>Keepaliveは、サービスを動かし続けるツールではありません。止まる前に、あなたに知らせるツールです。</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
@@ -523,9 +523,11 @@
 <section class="section">
   <h2>よくある質問</h2>
   <h3 class="q">カレンダーに入れておけば十分では？</h3>
-  <p>サービスが1つなら、それで十分だと思います。ただ、カレンダーに入れるには、サービスごとのルールを自分で調べて覚えておかなければなりません。日数が公式ドキュメントに書かれていないサービスもあります。その調べものと管理を、まとめて引き受けます。</p>
+  <p>非アクティブで止まるサービスは、使うたびに期限が後ろへずれます。「1週間後」と入れた予定は、アクセスした時点で古くなり、そのたびに入れ直すことになります。Keepaliveは、サービスを使ったあとに「確認した」を押した日から数え直します。各社の日数を調べる手間も、こちらで引き受けます。</p>
   <h3 class="q q-next">メールを見逃したのに、またメール？</h3>
-  <p>Jiraの警告メールは、毎週届くお知らせメールと差出人も見た目も同じで、その中に埋もれてしまいました。Keepaliveからのメールは、期限が近いときだけにする予定です。ニュースレターのような定期メールは送りません。</p>
+  <p>Jiraの警告メールは、毎週届くお知らせメールと差出人も見た目も同じで、その中に埋もれてしまいました。Keepaliveからのメールは、期限が近いときだけ送ります。ニュースレターのような定期メールは送りません。期限が近づいたときと直前の2回、いつ止まるかが分かる内容でお知らせし、メールから「確認した」を押せるようにする予定です。</p>
+  <h3 class="q q-next">毎日使っているサービスにも通知が来ますか？</h3>
+  <p>来ます。Keepaliveはサービスにログインしないので、使っているかどうかは分かりません。私のJiraも、ほぼ毎日使っていたのに止まりました。使っているサービスなら、「確認した」を押すだけです。</p>
   <h3 class="q q-next">cronでpingすれば済むのでは？</h3>
   <p>Supabaseなら、多くの場合それで防げます。ただ、私のJiraはAPIでほぼ毎日使っていたのに止まりました。Renderの無料DBは使っていても30日で失効するので、pingは効きません。そのcron自体も、publicリポジトリに動きがなければ60日で止まります。</p>
   <p>なお、Keepaliveには自動でpingして非アクティブ判定をすり抜ける機能は付けません。知らせるだけです。</p>
@@ -536,7 +538,7 @@
   <div class="section">
     <p class="section-label">料金</p>
     <h2>料金（予定）</h2>
-    <p class="pricing-note">予定の価格と機能です。正式公開までに変わることがあります。</p>
+    <p class="pricing-note">予定の価格と機能です。正式公開までに変わることがあります。無料枠を3つ以上使っている方は、Proが向いています。</p>
     <div class="plans">
       <div class="plan">
         <h3>Free</h3>
@@ -561,7 +563,7 @@
 
 <!-- 7. CTA -->
 <section class="cta-bottom" id="join">
-  <h2>無料枠の期限を、<br>もう覚えておかなくていいように。</h2>
+  <h2>止まる前に気づける仕組みを、<br>先に試しませんか。</h2>
   <p>事前登録しておくと、先行版が使えるようになったときにメールが1通届きます。</p>
   <form class="waitlist" id="waitlistForm2" action="https://formspree.io/f/mjykqjpe" method="POST" novalidate>
     <div class="hp" aria-hidden="true"><label>この欄は空のままにしてください <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
@@ -570,7 +572,7 @@
     <button type="submit">事前登録する</button>
   </form>
   <div class="form-status" role="status" aria-live="polite"></div>
-  <p class="waitlist-note">アドレスは、先行版のお知らせとお問い合わせへの返信以外には使いません。登録を取り消したいときは、お気軽にご連絡ください。</p>
+  <p class="waitlist-note">アドレスは、先行版のお知らせとお問い合わせへの返信以外には使いません。登録の取り消しは、<a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a>へ「取り消し」とご連絡ください。</p>
 </section>
 
 <p class="privacy" id="privacy">プライバシーについて：フォームに入力したメールアドレスは、米国のフォーム送信サービスFormspree（Formspree, Inc.）を経由して運営者に届き、同社のサーバーにも保存されます。使い道は、Keepaliveの先行版のお知らせと、お問い合わせへの返信だけです。どのページ・どの投稿から来たか（参照元とURLのutmパラメータ）も一緒に記録し、投稿ごとの登録数を数えるためだけに使います。登録情報の開示・訂正・削除や利用停止のご依頼、お問い合わせは <a href="mailto:studio.nock.system@gmail.com">studio.nock.system@gmail.com</a> までご連絡ください。安全管理の方法や、データの保存先の国の制度については、お問い合わせいただければお答えします。</p>
@@ -579,7 +581,7 @@
 
 <!-- 8. Footer -->
 <footer>
-  <span>Jiraのサイトを失った経験から作っています。</span>
+  <span>Jiraのサイトを失った経験から生まれたサービスです。</span>
   <div class="footer-links">
     <!-- TODO(CEO): 記事公開後、URLを差し替えてコメントを外す
     <a href="#" id="storyLink">記事を読む</a>
